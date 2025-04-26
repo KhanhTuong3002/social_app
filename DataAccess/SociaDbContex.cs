@@ -23,5 +23,20 @@ namespace DataAccess
 
 
         public DbSet<Post> Posts { get; set; }
+        public DbSet<User> Users { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Post>()
+                .Property(p => p.Id)
+                .HasMaxLength(20)
+                .IsRequired();
+
+            modelBuilder.Entity<User>()
+                .Property(u => u.Id)
+                .HasMaxLength(20)
+                .IsRequired();
+        }
     }
 }
