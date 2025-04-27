@@ -22,7 +22,8 @@ namespace Social.Controllers
         public async Task<IActionResult> Index()
         {
             var Allposts = await _context.Posts
-                .Include(n => n.user)
+                .Include(n => n.user).
+                OrderByDescending(n => n.CreatedAt)
                 .ToListAsync();
             return View(Allposts);
         }
@@ -41,6 +42,26 @@ namespace Social.Controllers
                 NrofRepost = 0,
                 UserId = loggedInUser.ToString(),
             };
+
+            // check if the user uploaded an image
+            if (post.image != null && post.image.Length > 0)
+            {
+                string rootFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+                if (post.image.ContentType.Contains("image"))
+                {
+                    string rootFolderPathImage = Path.Combine(rootFolderPath, "images/Uploaded");
+                    Directory.CreateDirectory(rootFolderPathImage); // Create the directory if it doesn't exist
+
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(post.image.FileName);
+                    string filePath = Path.Combine(rootFolderPathImage, fileName);
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await post.image.CopyToAsync(stream);
+                    }
+                    //set the image url to the new post
+                    newPost.ImageUrl = "/images/Uploaded/" + fileName; // Set the image URL to the new post
+                }
+            }
             //add the post to the database
             await _context.Posts.AddAsync(newPost);
             await _context.SaveChangesAsync();
