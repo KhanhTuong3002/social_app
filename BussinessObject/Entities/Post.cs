@@ -9,8 +9,9 @@ using System.Threading.Tasks;
 
 namespace BussinessObject.Entities
 {
-    public class Post : BaseEntity
+    public class Post
     {
+        [Key]
         public int PostId { get; set; }
         public string? ImageUrl { get; set; }
         public string? Content { get; set; }
@@ -19,7 +20,7 @@ namespace BussinessObject.Entities
         public DateTime UpdatedAt { get; set; }
 
         [ForeignKey(nameof(User))]
-        public string UserId { get; set; }
+        public string UserId { get; set; } = null!;
         public User user { get; set; }
 
     }

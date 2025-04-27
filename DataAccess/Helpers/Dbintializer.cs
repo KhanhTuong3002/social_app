@@ -14,7 +14,7 @@ namespace DataAccess.Helpers
             {
                 var newUser = new User
                 {
-                    Id = SnowflakeGenerator.Generate(),
+                    UserId = SnowflakeGenerator.Generate(),
                     FullName = "Khanh Tuong",
                     DateOfBirth = new DateTime(1990, 1, 1),
                     AvatarUrl = "/images/logo2.png"
@@ -25,12 +25,12 @@ namespace DataAccess.Helpers
 
                 var newPostWithImage = new Post
                 {
-                    ImageUrl = "/images/placeholders/miao.png", // <-- suggested file extension
-                    Content = "Hello World!",
+                    ImageUrl = "https://cdn.tgdd.vn/Files/2015/01/06/596407/he-dieu-hanh-windows-la-gi--2.jpg", // <-- suggested file extension
+                    Content = "Hello World! this is the first post in this social media",
                     NrofRepost = 0,
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow,
-                    UserId = newUser.Id,
+                    UserId = newUser.UserId,
                 };
 
                 var newPostWithoutImage = new Post
@@ -40,7 +40,7 @@ namespace DataAccess.Helpers
                     NrofRepost = 0,
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow,
-                    UserId = newUser.Id,
+                    UserId = newUser.UserId,
                 };
 
                 await context.Posts.AddRangeAsync(newPostWithImage, newPostWithoutImage);

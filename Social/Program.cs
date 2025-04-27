@@ -15,9 +15,9 @@ builder.Services.AddDbContext<SociaDbContex>(options =>
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+/*builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<SociaDbContex>();
+    .AddEntityFrameworkStores<SociaDbContex>();*/
 
 builder.Services.AddScoped<DbContext, SociaDbContex>();
 

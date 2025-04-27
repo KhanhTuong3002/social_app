@@ -29,12 +29,12 @@ namespace DataAccess
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Post>()
-                .Property(p => p.Id)
+                .Property(p => p.UserId)
                 .HasMaxLength(20)
                 .IsRequired();
 
             modelBuilder.Entity<User>()
-                .Property(u => u.Id)
+                .Property(u => u.UserId)
                 .HasMaxLength(20)
                 .IsRequired();
         }
