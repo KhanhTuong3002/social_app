@@ -15,6 +15,7 @@ namespace BussinessObject.Entities
         public string PostId { get; set; } = SnowflakeGenerator.Generate();
         public string? ImageUrl { get; set; }
         public string? Content { get; set; }
+        public bool isPrivate { get; set; } = false;
         public int NrofRepost { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
@@ -25,5 +26,7 @@ namespace BussinessObject.Entities
 
         public virtual ICollection<Like> Likes { get; set; } = new List<Like>();
         public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
+        public virtual ICollection<Favorite> Favorites { get; set; } = new List<Favorite>();
+
     }
 }

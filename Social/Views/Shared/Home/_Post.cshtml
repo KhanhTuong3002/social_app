@@ -8,6 +8,9 @@
         var t when t.TotalMinutes >= 1 => $"{(int)t.TotalMinutes} Minute(s) ago",
         _ => "Just now"
     };
+    bool isLiked = Model.Likes.Any(n => n.UserId == 175215637272985601.ToString());
+    bool isFavorite = Model.Favorites.Any(n => n.UserId == 175215637272985601.ToString());
+    bool isPrivate = Model.isPrivate == true && Model.user.UserId == 175215637272985601.ToString();
 }
 
 <div class="bg-white rounded-xl shadow-sm text-sm font-medium border1">
@@ -27,14 +30,18 @@
         <div class="-mr-1">
             <button type="button" class="button-icon w-8 h-8"> <ion-icon class="text-xl" name="ellipsis-horizontal"></ion-icon> </button>
             <div class="w-[245px]" uk-dropdown="pos: bottom-right; animation: uk-animation-scale-up uk-transform-origin-top-right; animate-out: true; mode: click">
-                <form>
-                    <input type="hidden" name="postId" />
-                    <button type="submit" class="hover:!bg-red-50 icon-link">
-                        <ion-icon name="lock-closed-outline"></ion-icon>  Set as private
-                    </button>
-                </form>
+             
+                @if(@Model.user.UserId == 175215637272985601.ToString()){
+                    <form asp-controller="Home" asp-action="TogglePostVisibility">
+                        <input type="hidden" name="postId" value="@Model.PostId" />
+                        <button type="submit" class="hover:!bg-red-50 icon-link">
+                            <ion-icon name="@(isPrivate ? "lock-open-outline": "lock-closed-outline")"></ion-icon>  Set as @(isPrivate ? "puplic" : "Private")
+                        </button>
+                    </form>
 
-                <hr>
+                    <hr>
+              }
+
                 <form asp-controller="Home" asp-action="Delete">
                     <input type="hidden" name="postId" />
                     <button type="submit" class="text-red-400 hover:!bg-red-50 icon-link">
@@ -74,8 +81,8 @@
         <div class="flex items-center gap-2.5">
             <form asp-controller="Home" asp-action="TogglePostLike">
                 <input type="hidden" name="postId" value="@Model.PostId" />
-                <button type="submit" class="button-icon @(Model.Likes.Any(n=> n.UserId == 175060751466102785.ToString())? "text-red-500 bg-red-100" : "")">
-                    <ion-icon class="text-lg" name="@(Model.Likes.Any(n=> n.UserId == 175060751466102785.ToString())? "Heart" :"heart-outline")"></ion-icon>
+                <button type="submit" class="button-icon @(isLiked ? "text-red-500 bg-red-100" : "")">
+                    <ion-icon class="text-lg" name="@(isLiked ? "Heart" :"heart-outline")"></ion-icon>
                 </button>
             </form>
             <a href="#">@Model.Likes.Count</a>
@@ -90,10 +97,17 @@
 
         <div class="ml-auto"></div>
 
-        <div>
-            <a class="button-icon ml-auto">
-                <ion-icon class="text-lg" name="bookmark-outline"></ion-icon>
-            </a>
+        <div class="flex items-center gap-2">
+            <form asp-controller="Home" asp-action="TogglePostFavorite">
+                <input type="hidden" name="postId" value="@Model.PostId"/>
+                <button type="submit" class="button-icon ml-auto @(isFavorite ? "text-orange-500 bt-orange-100":"bookmark-outline")">
+                    <ion-icon class="text-lg" name="@(isFavorite ? "bookmark":"bookmark-outline")"></ion-icon>
+                </button>
+            </form>
+            @if(Model.Favorites.Count > 0)
+            {
+                <a href="#">@Model.Favorites.Count</a>
+            }
         </div>
     </div>
 

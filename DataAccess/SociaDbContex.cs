@@ -27,6 +27,7 @@ namespace DataAccess
 
         public DbSet<Like> Likes { get; set; }
         public DbSet<Comment> Comments { get; set; }
+        public DbSet<Favorite> Favorites { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -66,6 +67,21 @@ namespace DataAccess
             modelBuilder.Entity<Comment>().
                 HasOne(l => l.User)
                 .WithMany(u => u.Comments)
+                .HasForeignKey(l => l.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+            //favorite
+            modelBuilder.Entity<Favorite>().
+                HasKey(l => new { l.UserId, l.PostId });
+
+            modelBuilder.Entity<Favorite>().
+                HasOne(l => l.Post)
+                .WithMany(p => p.Favorites)
+                .HasForeignKey(l => l.PostId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Favorite>().
+                HasOne(l => l.User)
+                .WithMany(u => u.Favorites)
                 .HasForeignKey(l => l.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 

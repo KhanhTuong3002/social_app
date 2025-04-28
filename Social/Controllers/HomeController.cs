@@ -21,10 +21,15 @@ namespace Social.Controllers
 
         public async Task<IActionResult> Index()
         {
+            long loggedInUser = 175215637272985601;
+
             var Allposts = await _context.Posts
-                .Include(n => n.user).
-                Include(n => n.Likes).ThenInclude(n => n.User)
+                .Where(n => !n.isPrivate || n.UserId == loggedInUser.ToString())//restore a post to be public
+                /*.Where(n => !n.isPrivate)*/ 
+                .Include(n => n.user)
+                .Include(n => n.Likes).ThenInclude(n => n.User)
                 .Include(n => n.Comments).ThenInclude(n => n.User)
+                .Include(n => n.Favorites).ThenInclude(n => n.User)
                 .OrderByDescending(n => n.CreatedAt)
                 .ToListAsync();
             return View(Allposts);
@@ -33,7 +38,7 @@ namespace Social.Controllers
         public async Task<IActionResult> CreatePost(PostVM post)
         {
             // get the logged user
-            long loggedInUser = 175060751466102785;
+            long loggedInUser = 175215637272985601;
             //create a new post
             Post newPost = new Post()
             {
@@ -75,13 +80,13 @@ namespace Social.Controllers
 
         public async Task<IActionResult> TogglePostLike(PostLikeVM postLikeVM)
         {
-            long loggedInUser = 175060751466102785;
+            long loggedInUser = 175215637272985601;
 
             //check if user liked the post
             var like = await _context.Likes.
                 Where(l => l.PostId == postLikeVM.PostId && l.UserId == loggedInUser.ToString()).FirstOrDefaultAsync();
 
-            if(like != null)
+            if (like != null)
             {
                 _context.Likes.Remove(like);
                 await _context.SaveChangesAsync();
@@ -100,20 +105,72 @@ namespace Social.Controllers
             return RedirectToAction("Index");
 
         }
+
+        [HttpPost]
+
+        public async Task<IActionResult> TogglePostFavorite(PostFavoriteVM postFavoriteVM)
+        {
+            long loggedInUser = 175215637272985601;
+
+            //check if user favorite the post
+            var favorite = await _context.Favorites.
+                Where(l => l.PostId == postFavoriteVM.PostId && l.UserId == loggedInUser.ToString()).FirstOrDefaultAsync();
+
+            if (favorite != null)
+            {
+                _context.Favorites.Remove(favorite);
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                var newFavorite = new Favorite()
+                {
+                    PostId = postFavoriteVM.PostId,
+                    UserId = loggedInUser.ToString(),
+                    CreatedAt = DateTime.UtcNow,
+                };
+                await _context.Favorites.AddAsync(newFavorite);
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction("Index");
+
+        }
+
+        [HttpPost]
+
+        public async Task<IActionResult> TogglePostVisibility(PostVisibilityVM postVisibilityVM)
+        {
+            long loggedInUser = 175215637272985601;
+
+            //get post by id and logging the user id
+            var post = await _context.Posts
+                .FirstOrDefaultAsync(l => l.PostId == postVisibilityVM.PostId && l.UserId == loggedInUser.ToString());
+
+            if (post != null)
+            {
+                post.isPrivate = !post.isPrivate;
+                _context.Posts.Update(post);
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction("Index");
+
+        }
+
         [HttpPost]
         public async Task<IActionResult> AddPostComment(PostCommentPM commentVM)
         {
-            long loggedInUser = 175060751466102785;
+            long loggedInUser = 175215637272985601;
 
             //create a new comment
-         var newComment = new Comment()
-         {
-             Content = commentVM.Content,
-             CreatedAt = DateTime.UtcNow,
-             UpdatedAt = DateTime.UtcNow,
-             PostId = commentVM.PostId,
-             UserId = loggedInUser.ToString(),
-         };
+            var newComment = new Comment()
+            {
+                Content = commentVM.Content,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+                PostId = commentVM.PostId,
+                UserId = loggedInUser.ToString(),
+            };
 
             //add the comment to the database
             await _context.Comments.AddAsync(newComment);
@@ -123,7 +180,7 @@ namespace Social.Controllers
             return RedirectToAction("Index");
         }
         [HttpPost]
-        public async Task<IActionResult> RemovePostComment(RemoveCommentPM commentVM )
+        public async Task<IActionResult> RemovePostComment(RemoveCommentPM commentVM)
         {
             //get the comment
             var commentdb = await _context.Comments.Where(c => c.CommentId == commentVM.CommentId).FirstOrDefaultAsync();
