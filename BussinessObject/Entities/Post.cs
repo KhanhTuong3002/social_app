@@ -24,5 +24,6 @@ namespace BussinessObject.Entities
         public User user { get; set; }
 
         public virtual ICollection<Like> Likes { get; set; } = new List<Like>();
+        public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
     }
 }

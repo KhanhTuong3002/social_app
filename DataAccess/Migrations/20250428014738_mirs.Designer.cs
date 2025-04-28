@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(SociaDbContex))]
-    [Migration("20250428003304_mirs")]
+    [Migration("20250428014738_mirs")]
     partial class mirs
     {
         /// <inheritdoc />
@@ -24,6 +24,37 @@ namespace DataAccess.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("BussinessObject.Entities.Comment", b =>
+                {
+                    b.Property<string>("CommentId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Content")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PostId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("CommentId");
+
+                    b.HasIndex("PostId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Comments");
+                });
 
             modelBuilder.Entity("BussinessObject.Entities.Like", b =>
                 {
@@ -98,12 +129,31 @@ namespace DataAccess.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("BussinessObject.Entities.Comment", b =>
+                {
+                    b.HasOne("BussinessObject.Entities.Post", "Post")
+                        .WithMany("Comments")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BussinessObject.Entities.User", "User")
+                        .WithMany("Comments")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("BussinessObject.Entities.Like", b =>
                 {
                     b.HasOne("BussinessObject.Entities.Post", "Post")
                         .WithMany("Likes")
                         .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("BussinessObject.Entities.User", "User")
@@ -130,11 +180,15 @@ namespace DataAccess.Migrations
 
             modelBuilder.Entity("BussinessObject.Entities.Post", b =>
                 {
+                    b.Navigation("Comments");
+
                     b.Navigation("Likes");
                 });
 
             modelBuilder.Entity("BussinessObject.Entities.User", b =>
                 {
+                    b.Navigation("Comments");
+
                     b.Navigation("Likes");
 
                     b.Navigation("Posts");
