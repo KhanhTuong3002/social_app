@@ -25,6 +25,8 @@ namespace DataAccess
         public DbSet<Post> Posts { get; set; }
         public DbSet<User> Users { get; set; }
 
+        public DbSet<Like> Likes { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -37,6 +39,24 @@ namespace DataAccess
                 .Property(u => u.UserId)
                 .HasMaxLength(20)
                 .IsRequired();
+
+            modelBuilder.Entity<Like>().
+                HasKey(l => new { l.UserId, l.PostId });
+
+            modelBuilder.Entity<Like>().
+                HasOne(l => l.Post)
+                .WithMany(p => p.Likes)
+                .HasForeignKey(l => l.PostId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Like>().
+                HasOne(l => l.User)
+                .WithMany(u => u.Likes)
+                .HasForeignKey(l => l.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            base.OnModelCreating(modelBuilder);
+
         }
     }
 }

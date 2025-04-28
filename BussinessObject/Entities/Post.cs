@@ -12,7 +12,7 @@ namespace BussinessObject.Entities
     public class Post
     {
         [Key]
-        public int PostId { get; set; }
+        public string PostId { get; set; } = SnowflakeGenerator.Generate();
         public string? ImageUrl { get; set; }
         public string? Content { get; set; }
         public int NrofRepost { get; set; }
@@ -23,5 +23,6 @@ namespace BussinessObject.Entities
         public string UserId { get; set; } = null!;
         public User user { get; set; }
 
+        public virtual ICollection<Like> Likes { get; set; } = new List<Like>();
     }
 }

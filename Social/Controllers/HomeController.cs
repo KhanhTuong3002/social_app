@@ -23,6 +23,7 @@ namespace Social.Controllers
         {
             var Allposts = await _context.Posts
                 .Include(n => n.user).
+                Include(n => n.Likes).ThenInclude(n => n.User).
                 OrderByDescending(n => n.CreatedAt)
                 .ToListAsync();
             return View(Allposts);
@@ -31,7 +32,7 @@ namespace Social.Controllers
         public async Task<IActionResult> CreatePost(PostVM post)
         {
             // get the logged user
-            long loggedInUser = 174892253880254465;
+            long loggedInUser = 175046954345037824;
             //create a new post
             Post newPost = new Post()
             {
@@ -69,5 +70,34 @@ namespace Social.Controllers
             // redirect to the index page
             return RedirectToAction("Index");
         }
+        [HttpPost]
+
+        public async Task<IActionResult> TogglePostLike(PostLikeVM postLikeVM)
+        {
+            long loggedInUser = 175046954345037824;
+
+            //check if user liked the post
+            var like = await _context.Likes.
+                Where(l => l.PostId == postLikeVM.PostId && l.UserId == loggedInUser.ToString()).FirstOrDefaultAsync();
+
+            if(like != null)
+            {
+                _context.Likes.Remove(like);
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                var newLike = new Like()
+                {
+                    PostId = postLikeVM.PostId,
+                    UserId = loggedInUser.ToString(),
+                    CreatedAt = DateTime.UtcNow,
+                };
+                await _context.Likes.AddAsync(newLike);
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction("Index");
+
+        }     
     }
 }
