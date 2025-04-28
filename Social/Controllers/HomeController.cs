@@ -24,12 +24,13 @@ namespace Social.Controllers
             long loggedInUser = 175215637272985601;
 
             var Allposts = await _context.Posts
-                .Where(n => !n.isPrivate || n.UserId == loggedInUser.ToString())//restore a post to be public
+                .Where(n => (!n.isPrivate || n.UserId == loggedInUser.ToString()) && n.Reports.Count < 5)//restore a post to be public
                 /*.Where(n => !n.isPrivate)*/ 
                 .Include(n => n.user)
                 .Include(n => n.Likes).ThenInclude(n => n.User)
                 .Include(n => n.Comments).ThenInclude(n => n.User)
                 .Include(n => n.Favorites).ThenInclude(n => n.User)
+                .Include(n => n.Reports).ThenInclude(n => n.User)
                 .OrderByDescending(n => n.CreatedAt)
                 .ToListAsync();
             return View(Allposts);
@@ -179,6 +180,31 @@ namespace Social.Controllers
             // redirect to the index page
             return RedirectToAction("Index");
         }
+
+        [HttpPost]
+        public async Task<IActionResult> AddPostReport(PostReportVM postReportVM)
+        {
+            long loggedInUser = 175215637272985601;
+
+            //create a new comment
+            var newReport = new Report()
+            {
+                
+                CreatedAt = DateTime.UtcNow,             
+                PostId = postReportVM.PostId,
+                UserId = loggedInUser.ToString(),
+            };
+
+            //add the comment to the database
+            await _context.Reports.AddAsync(newReport);
+            await _context.SaveChangesAsync();
+
+            // redirect to the index page
+            return RedirectToAction("Index");
+        }
+
+
+
         [HttpPost]
         public async Task<IActionResult> RemovePostComment(RemoveCommentPM commentVM)
         {
