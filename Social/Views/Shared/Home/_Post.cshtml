@@ -30,7 +30,7 @@
 
         <div class="-mr-1">
             <button type="button" class="button-icon w-8 h-8"> <ion-icon class="text-xl" name="ellipsis-horizontal"></ion-icon> </button>
-            <div class="w-[245px]" uk-dropdown="pos: bottom-right; animation: uk-animation-scale-up uk-transform-origin-top-right; animate-out: true; mode: click">
+            <div class="w-[245px] post-options-dropdown" uk-dropdown="pos: bottom-right; animation: uk-animation-scale-up uk-transform-origin-top-right; animate-out: true; mode: click">
 
                 @if (@Model.user.UserId == 175215637272985601.ToString())
                 {
@@ -43,12 +43,11 @@
 
                     <hr>
 
-                    <form asp-controller="Home" asp-action="Delete">
-                        <input type="hidden" name="postId" />
-                        <button type="submit" class="text-red-400 hover:!bg-red-50 icon-link">
+
+                    <button type="button" onclick="openPostDeleteCfm('@Model.PostId')" class="text-red-400 hover:!bg-red-50 delete-post-btn">
                             <ion-icon name="trash-bin-outline"></ion-icon>  Delete Post
                         </button>
-                    </form>
+                    
                 }
                 @if (!isReported)
                 {
@@ -187,3 +186,4 @@
         </form>
     </div>
 </div>
+

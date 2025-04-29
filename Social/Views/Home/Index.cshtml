@@ -97,3 +97,14 @@
 
 <partial name="Modals/_CreateStory"></partial>
 <partial name="Modals/_CreateStatus" model="new PostVM()"/>
+
+<partial name="Home/_PostDeleteCfm" />
+<script>
+    function openPostDeleteCfm(postId) {
+
+        console.log('Selected post id:', postId); // Fix the console.log syntax
+        UIkit.dropdown('.post-options-dropdown').hide(0); // Hide the dropdown if it's open')
+        document.getElementById("deleteConfirmationPostId").value = postId; // Ensure the element with ID "postId" exists
+        UIkit.modal("#postDeleteDialog").show(); // Ensure the modal with ID "postDeleteDialog" exists
+    }
+</script>

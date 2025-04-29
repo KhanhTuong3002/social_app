@@ -24,7 +24,7 @@ namespace Social.Controllers
             long loggedInUser = 175215637272985601;
 
             var Allposts = await _context.Posts
-                .Where(n => (!n.isPrivate || n.UserId == loggedInUser.ToString()) && n.Reports.Count < 5)//restore a post to be public
+                .Where(n => (!n.isPrivate || n.UserId == loggedInUser.ToString()) && n.Reports.Count < 5 && !n.IsDeleted)//restore a post to be public
                 /*.Where(n => !n.isPrivate)*/ 
                 .Include(n => n.user)
                 .Include(n => n.Likes).ThenInclude(n => n.User)
@@ -217,5 +217,18 @@ namespace Social.Controllers
             }
             return RedirectToAction("Index");
         }
+        public async Task<IActionResult> PostDelete (PostDeleteVM postDeleteVM)
+        {
+            //get the comment
+            var postdb = await _context.Posts.Where(c => c.PostId == postDeleteVM.PostId).FirstOrDefaultAsync();
+            if (postdb != null)
+            {
+                postdb.IsDeleted = true;
+                _context.Posts.Update(postdb);
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction("Index");
+        }
+
     }
 }

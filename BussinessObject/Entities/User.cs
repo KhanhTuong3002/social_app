@@ -17,6 +17,7 @@ namespace BussinessObject.Entities
         public string? FullName { get; set; }
         public DateTime DateOfBirth { get; set; }
         public string? AvatarUrl { get; set; }
+        public bool IsDeleted { get; set; }
 
         public ICollection<Post> Posts { get; set; } = new List<Post>();
         public ICollection<Like> Likes { get; set; } = new List<Like>();

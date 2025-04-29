@@ -20,6 +20,8 @@ namespace BussinessObject.Entities
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
 
+        public bool IsDeleted { get; set; }
+
         [ForeignKey(nameof(User))]
         public string UserId { get; set; } = null!;
         public User user { get; set; }
