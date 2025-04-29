@@ -29,7 +29,7 @@ namespace DataAccess
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Favorite> Favorites { get; set; }
         public DbSet<Report> Reports { get; set; }
-
+        public DbSet<Story> Stories { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -42,6 +42,12 @@ namespace DataAccess
                 .Property(u => u.UserId)
                 .HasMaxLength(20)
                 .IsRequired();
+
+            modelBuilder.Entity<User>().
+                HasMany(u => u.Stories)
+                .WithOne(p => p.User)
+                .HasForeignKey(u => u.UserId);
+               
 
             modelBuilder.Entity<Like>().
                 HasKey(l => new { l.UserId, l.PostId });

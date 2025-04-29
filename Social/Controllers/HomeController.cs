@@ -57,7 +57,7 @@ namespace Social.Controllers
                 string rootFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
                 if (post.image.ContentType.Contains("image"))
                 {
-                    string rootFolderPathImage = Path.Combine(rootFolderPath, "images/Uploaded");
+                    string rootFolderPathImage = Path.Combine(rootFolderPath, "images/posts");
                     Directory.CreateDirectory(rootFolderPathImage); // Create the directory if it doesn't exist
 
                     string fileName = Guid.NewGuid().ToString() + Path.GetExtension(post.image.FileName);
@@ -67,7 +67,7 @@ namespace Social.Controllers
                         await post.image.CopyToAsync(stream);
                     }
                     //set the image url to the new post
-                    newPost.ImageUrl = "/images/Uploaded/" + fileName; // Set the image URL to the new post
+                    newPost.ImageUrl = "/images/posts/" + fileName; // Set the image URL to the new post
                 }
             }
             //add the post to the database

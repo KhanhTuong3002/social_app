@@ -55,9 +55,9 @@
 
         if (file) {
            const reader = new FileReader();
+            imagePreviewContainer.classList.remove('hidden');
            reader.onload = function(e) {
                imagePreview.src = e.target.result;
-               imagePreviewContainer.classList.remove('hidden');
            }
            reader.readAsDataURL(file);
        } else {

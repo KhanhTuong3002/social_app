@@ -154,6 +154,31 @@ namespace DataAccess.Migrations
                     b.ToTable("Reports");
                 });
 
+            modelBuilder.Entity("BussinessObject.Entities.Story", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Stories");
+                });
+
             modelBuilder.Entity("BussinessObject.Entities.User", b =>
                 {
                     b.Property<string>("UserId")
@@ -264,6 +289,17 @@ namespace DataAccess.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("BussinessObject.Entities.Story", b =>
+                {
+                    b.HasOne("BussinessObject.Entities.User", "User")
+                        .WithMany("Stories")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("BussinessObject.Entities.Post", b =>
                 {
                     b.Navigation("Comments");
@@ -286,6 +322,8 @@ namespace DataAccess.Migrations
                     b.Navigation("Posts");
 
                     b.Navigation("Reports");
+
+                    b.Navigation("Stories");
                 });
 #pragma warning restore 612, 618
         }
