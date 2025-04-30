@@ -24,12 +24,12 @@ namespace DataAccess
 
         public DbSet<Post> Posts { get; set; }
         public DbSet<User> Users { get; set; }
-
         public DbSet<Like> Likes { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Favorite> Favorites { get; set; }
         public DbSet<Report> Reports { get; set; }
         public DbSet<Story> Stories { get; set; }
+        public DbSet<HashTag> HashTags { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -47,7 +47,19 @@ namespace DataAccess
                 HasMany(u => u.Stories)
                 .WithOne(p => p.User)
                 .HasForeignKey(u => u.UserId);
-               
+
+            modelBuilder.Entity<User>()
+               .HasMany(u => u.HashTags)
+               .WithOne(h => h.User)
+               .HasForeignKey(h => h.UserId)
+               .OnDelete(DeleteBehavior.Restrict); // Prevent deletion of a User if HashTags exist
+
+            modelBuilder.Entity<Post>()
+                .HasMany(p => p.HashTags)
+                .WithOne(h => h.Post)
+                .HasForeignKey(h => h.PostId)
+                .OnDelete(DeleteBehavior.Cascade);
+
 
             modelBuilder.Entity<Like>().
                 HasKey(l => new { l.UserId, l.PostId });

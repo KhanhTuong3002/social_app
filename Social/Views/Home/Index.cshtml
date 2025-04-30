@@ -6,7 +6,6 @@
             @await Component.InvokeAsync("Stories")
 
             <div class="md:max-w-[580px] mx-auto flex-1 xl:space-y-6 space-y-3">
-
                 <div class="bg-white rounded-xl shadow-sm md:p-4 p-2 space-y-4 text-sm font-medium border1">
                     <div class="flex items-center md:gap-3 gap-1">
                         <div class="flex-1 bg-slate-100 hover:bg-opacity-80 transition-all rounded-lg cursor-pointer" uk-toggle="target: #create-status">
@@ -22,10 +21,9 @@
                             </svg>
                         </div>
                     </div>
-
                 </div>
 
-                @if(Model.Count == 0)
+                @if (Model.Count == 0)
                 {
                     <div class="bg-white rounded-xl shadow-sm md:p-4 p-2 space-y-4 text-sm font-medium border1" style="width: 580px;">
                         Currently, there are no posts available. Would you like to create the first one?
@@ -35,7 +33,7 @@
                 {
                     @foreach (var post in Model)
                     {
-                       <partial name="Home/_Post" model="post" />
+                        <partial name="Home/_Post" model="post" />
                     }
                 }
             </div>
@@ -43,9 +41,10 @@
         <div class="flex-1">
             <div class="lg:space-y-4 lg:pb-8 max-lg:grid sm:grid-cols-2 max-lg:gap-6">
                 <div class="box p-5 px-6">
-                    <partial name="Sidebar/_SuggestedFriends"/>
+                    <partial name="Sidebar/_SuggestedFriends" />
+                </div> <!-- Closing missing div -->
                 <div class="box p-5 px-6">
-                    <partial name="Sidebar/_TrendsForYou"/>
+                   @await Component.InvokeAsync("Hashtags")
                 </div>
             </div>
         </div>
