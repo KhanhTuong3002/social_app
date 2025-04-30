@@ -54,7 +54,7 @@ namespace Social_App.Controllers
             await _context.Stories.AddAsync(newStory);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Index","Home");
         }
     }
 }
