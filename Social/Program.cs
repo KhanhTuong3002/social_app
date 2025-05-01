@@ -23,6 +23,7 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 //Services Configuration
 builder.Services.AddScoped<IPostService, PostService>();
 builder.Services.AddScoped<IHashtagServices, HashtagServices>();
+builder.Services.AddScoped<IStoriesServices, StoriesServices>();
 
 
 builder.Services.AddScoped<DbContext, SociaDbContex>();
