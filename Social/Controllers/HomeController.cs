@@ -2,6 +2,7 @@ using BussinessObject;
 using BussinessObject.Entities;
 using DataAccess;
 using DataAccess.Helpers;
+using DataAccess.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Social.Models;
@@ -14,27 +15,22 @@ namespace Social.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly SociaDbContex _context;
-
-        public HomeController(ILogger<HomeController> logger, SociaDbContex context)
+        public readonly IPostService _postService;
+        
+                
+        public HomeController(ILogger<HomeController> logger, SociaDbContex context, IPostService postService)
         {
             _logger = logger;
             _context = context;
+            _postService = postService;
+
         }
 
         public async Task<IActionResult> Index()
         {
             long loggedInUser = 175215637272985601;
 
-            var Allposts = await _context.Posts
-                .Where(n => (!n.isPrivate || n.UserId == loggedInUser.ToString()) && n.Reports.Count < 5 && !n.IsDeleted)//restore a post to be public
-                /*.Where(n => !n.isPrivate)*/ 
-                .Include(n => n.user)
-                .Include(n => n.Likes).ThenInclude(n => n.User)
-                .Include(n => n.Comments).ThenInclude(n => n.User)
-                .Include(n => n.Favorites).ThenInclude(n => n.User)
-                .Include(n => n.Reports).ThenInclude(n => n.User)
-                .OrderByDescending(n => n.CreatedAt)
-                .ToListAsync();
+            var Allposts = await _postService.GetAllPostsAsync(loggedInUser.ToString());
             return View(Allposts);
         }
         [HttpPost]
@@ -54,27 +50,7 @@ namespace Social.Controllers
             };
 
             // check if the user uploaded an image
-            if (post.image != null && post.image.Length > 0)
-            {
-                string rootFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
-                if (post.image.ContentType.Contains("image"))
-                {
-                    string rootFolderPathImage = Path.Combine(rootFolderPath, "images/posts");
-                    Directory.CreateDirectory(rootFolderPathImage); // Create the directory if it doesn't exist
-
-                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(post.image.FileName);
-                    string filePath = Path.Combine(rootFolderPathImage, fileName);
-                    using (var stream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await post.image.CopyToAsync(stream);
-                    }
-                    //set the image url to the new post
-                    newPost.ImageUrl = "/images/posts/" + fileName; // Set the image URL to the new post
-                }
-            }
-            //add the post to the database
-            await _context.Posts.AddAsync(newPost);
-            await _context.SaveChangesAsync();
+            await _postService.CreatePostAsync(newPost, post.image);
 
             //find the hashtags in the post content
             var posHashtags = HashtagHelper.GetHashtags(post.content);
@@ -116,27 +92,8 @@ namespace Social.Controllers
         public async Task<IActionResult> TogglePostLike(PostLikeVM postLikeVM)
         {
             long loggedInUser = 175215637272985601;
+            await _postService.TogglePostLikeAsync(postLikeVM.PostId, loggedInUser.ToString());
 
-            //check if user liked the post
-            var like = await _context.Likes.
-                Where(l => l.PostId == postLikeVM.PostId && l.UserId == loggedInUser.ToString()).FirstOrDefaultAsync();
-
-            if (like != null)
-            {
-                _context.Likes.Remove(like);
-                await _context.SaveChangesAsync();
-            }
-            else
-            {
-                var newLike = new Like()
-                {
-                    PostId = postLikeVM.PostId,
-                    UserId = loggedInUser.ToString(),
-                    CreatedAt = DateTime.UtcNow,
-                };
-                await _context.Likes.AddAsync(newLike);
-                await _context.SaveChangesAsync();
-            }
             return RedirectToAction("Index");
 
         }
@@ -147,26 +104,7 @@ namespace Social.Controllers
         {
             long loggedInUser = 175215637272985601;
 
-            //check if user favorite the post
-            var favorite = await _context.Favorites.
-                Where(l => l.PostId == postFavoriteVM.PostId && l.UserId == loggedInUser.ToString()).FirstOrDefaultAsync();
-
-            if (favorite != null)
-            {
-                _context.Favorites.Remove(favorite);
-                await _context.SaveChangesAsync();
-            }
-            else
-            {
-                var newFavorite = new Favorite()
-                {
-                    PostId = postFavoriteVM.PostId,
-                    UserId = loggedInUser.ToString(),
-                    CreatedAt = DateTime.UtcNow,
-                };
-                await _context.Favorites.AddAsync(newFavorite);
-                await _context.SaveChangesAsync();
-            }
+            await _postService.TogglePostFavoriteAsync(postFavoriteVM.PostId, loggedInUser.ToString());
             return RedirectToAction("Index");
 
         }
@@ -176,17 +114,7 @@ namespace Social.Controllers
         public async Task<IActionResult> TogglePostVisibility(PostVisibilityVM postVisibilityVM)
         {
             long loggedInUser = 175215637272985601;
-
-            //get post by id and logging the user id
-            var post = await _context.Posts
-                .FirstOrDefaultAsync(l => l.PostId == postVisibilityVM.PostId && l.UserId == loggedInUser.ToString());
-
-            if (post != null)
-            {
-                post.isPrivate = !post.isPrivate;
-                _context.Posts.Update(post);
-                await _context.SaveChangesAsync();
-            }
+            await _postService.TogglePostVisibilityAsync(postVisibilityVM.PostId, loggedInUser.ToString());
 
             return RedirectToAction("Index");
 
@@ -196,7 +124,7 @@ namespace Social.Controllers
         public async Task<IActionResult> AddPostComment(PostCommentPM commentVM)
         {
             long loggedInUser = 175215637272985601;
-
+ 
             //create a new comment
             var newComment = new Comment()
             {
@@ -207,10 +135,7 @@ namespace Social.Controllers
                 UserId = loggedInUser.ToString(),
             };
 
-            //add the comment to the database
-            await _context.Comments.AddAsync(newComment);
-            await _context.SaveChangesAsync();
-
+            await _postService.AddPostCommentAsync(newComment);
             // redirect to the index page
             return RedirectToAction("Index");
         }
@@ -219,19 +144,7 @@ namespace Social.Controllers
         public async Task<IActionResult> AddPostReport(PostReportVM postReportVM)
         {
             long loggedInUser = 175215637272985601;
-
-            //create a new comment
-            var newReport = new Report()
-            {
-                
-                CreatedAt = DateTime.UtcNow,             
-                PostId = postReportVM.PostId,
-                UserId = loggedInUser.ToString(),
-            };
-
-            //add the comment to the database
-            await _context.Reports.AddAsync(newReport);
-            await _context.SaveChangesAsync();
+            await _postService.ReportPostAsync(postReportVM.PostId, loggedInUser.ToString());
 
             // redirect to the index page
             return RedirectToAction("Index");
@@ -242,27 +155,15 @@ namespace Social.Controllers
         [HttpPost]
         public async Task<IActionResult> RemovePostComment(RemoveCommentPM commentVM)
         {
-            //get the comment
-            var commentdb = await _context.Comments.Where(c => c.CommentId == commentVM.CommentId).FirstOrDefaultAsync();
-            if (commentdb != null)
-            {
-                _context.Comments.Remove(commentdb);
-                await _context.SaveChangesAsync();
-            }
+            await _postService.RemovePostCommentAsync(commentVM.CommentId);
             return RedirectToAction("Index");
         }
         public async Task<IActionResult> PostDelete (PostDeleteVM postDeleteVM)
         {
-            //get the comment
-            var postdb = await _context.Posts.Where(c => c.PostId == postDeleteVM.PostId).FirstOrDefaultAsync();
-            if (postdb != null)
-            {
-                postdb.IsDeleted = true;
-                _context.Posts.Update(postdb);
-                await _context.SaveChangesAsync();
+            await _postService.RemovePostAsync(postDeleteVM.PostId);
 
                 //update hashtags
-                var hashtags = HashtagHelper.GetHashtags(postdb.Content);
+/*                var hashtags = HashtagHelper.GetHashtags(postdb.Content);
                 foreach (var hashtag in hashtags)
                 {
                     var hashtagDb = await _context.HashTags
@@ -276,13 +177,12 @@ namespace Social.Controllers
                         _context.HashTags.Update(hashtagDb);
                         await _context.SaveChangesAsync();
                     }
-                }
-            }
-         
+             
+                }*/
 
             return RedirectToAction("Index");
-
         }
-
     }
+
 }
+

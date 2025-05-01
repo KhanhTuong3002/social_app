@@ -1,5 +1,6 @@
 using DataAccess;
 using DataAccess.Helpers;
+using DataAccess.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,6 +19,10 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 /*builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<SociaDbContex>();*/
+
+//Services Configuration
+builder.Services.AddScoped<IPostService, PostService>();
+
 
 builder.Services.AddScoped<DbContext, SociaDbContex>();
 
