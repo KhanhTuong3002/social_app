@@ -66,7 +66,7 @@ namespace DataAccess.Services
         }
 
 
-        public async Task RemovePostAsync(string postId)
+        public async Task<Post> RemovePostAsync(string postId)
         {
             var postDb = await _context.Posts.FirstOrDefaultAsync(n => n.PostId == postId);
             if (postDb != null)
@@ -75,6 +75,7 @@ namespace DataAccess.Services
                 _context.Posts.Update(postDb);
                 await _context.SaveChangesAsync();
             }
+            return postDb;
         }
 
         public async Task RemovePostCommentAsync(string commentId)

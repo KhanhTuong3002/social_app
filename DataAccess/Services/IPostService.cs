@@ -12,7 +12,7 @@ namespace DataAccess.Services
     {
         Task<List<Post>> GetAllPostsAsync(string loggedInUser);
         Task<Post> CreatePostAsync(Post post, IFormFile image);
-        Task RemovePostAsync(string postId);
+        Task<Post> RemovePostAsync(string postId);
         Task AddPostCommentAsync(Comment comment);
         Task RemovePostCommentAsync(string commentId);
         Task TogglePostLikeAsync(string postId, string userId);
