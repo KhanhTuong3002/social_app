@@ -2,6 +2,7 @@ using BussinessObject;
 using BussinessObject.Entities;
 using DataAccess;
 using DataAccess.Helpers;
+using DataAccess.Helpers.Enums;
 using DataAccess.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,15 +18,17 @@ namespace Social.Controllers
        // private readonly SociaDbContex _context;
         public readonly IPostService _postService;
         private readonly IHashtagServices _hashtagServices;
+        private readonly IFileServices _fileServices;
 
 
         public HomeController(ILogger<HomeController> logger, 
-            IPostService postService, IHashtagServices hashtagServices)
+            IPostService postService, IHashtagServices hashtagServices, IFileServices fileServices)
         {
             _logger = logger;
             //_context = context;
             _postService = postService;
             _hashtagServices = hashtagServices;
+            _fileServices = fileServices;
         }
 
         public async Task<IActionResult> Index()
@@ -40,19 +43,22 @@ namespace Social.Controllers
         {
             // get the logged user
             long loggedInUser = 175215637272985601;
+
+            var imageUploadPath = await _fileServices.UploadFileAsync(post.image, ImageFileType.postImage);
+
             //create a new post
             Post newPost = new Post()
             {
                 Content = post.content,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow,
-                ImageUrl = null,
+                ImageUrl = imageUploadPath,
                 NrofRepost = 0,
                 UserId = loggedInUser.ToString(),
             };
 
             // check if the user uploaded an image
-            await _postService.CreatePostAsync(newPost, post.image);
+            await _postService.CreatePostAsync(newPost);
 
             //find the hashtags in the post content
             await _hashtagServices.ProcessHashtagsForNewPostAsync(post.postId, post.content, post.UserId);

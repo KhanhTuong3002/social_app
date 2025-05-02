@@ -1,4 +1,4 @@
-﻿using BussinessObject.Entities;
+﻿using DataAccess.Helpers.Enums;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -8,9 +8,8 @@ using System.Threading.Tasks;
 
 namespace DataAccess.Services
 {
-    public interface IStoriesServices
+    public interface IFileServices
     {
-        Task<List<Story>> GetAllStoriesAsync();
-        Task<Story> CreateStoryAsync(Story story);
+        Task<string> UploadFileAsync(IFormFile file, ImageFileType imageFileType);
     }
 }

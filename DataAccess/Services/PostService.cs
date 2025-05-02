@@ -39,26 +39,9 @@ namespace DataAccess.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Post> CreatePostAsync(Post post, IFormFile image)
+        public async Task<Post> CreatePostAsync(Post post)
         {
-            if (image != null && image.Length > 0)
-            {
-                string rootFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
-                if (image.ContentType.Contains("image"))
-                {
-                    string rootFolderPathImage = Path.Combine(rootFolderPath, "images/posts");
-                    Directory.CreateDirectory(rootFolderPathImage); // Create the directory if it doesn't exist
-
-                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(image.FileName);
-                    string filePath = Path.Combine(rootFolderPathImage, fileName);
-                    using (var stream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await image.CopyToAsync(stream);
-                    }
-                    //set the image url to the new post
-                    post.ImageUrl = "/images/posts/" + fileName; // Set the image URL to the new post
-                }
-            }
+           
             await _context.Posts.AddAsync(post);
             await _context.SaveChangesAsync();
 
