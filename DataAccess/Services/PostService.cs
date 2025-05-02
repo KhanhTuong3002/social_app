@@ -32,6 +32,21 @@ namespace DataAccess.Services
 
             return Allposts;
         }
+        public async Task<List<Post>> GetAllFavoritePost(string loggedInUser)
+        {
+            var allFavoritePosts = await _context.Favorites
+                .Where(n => n.UserId == loggedInUser &&
+                            !n.Post.IsDeleted &&
+                            n.Post.Reports.Count < 5)
+                .Include(n => n.Post).ThenInclude(p => p.user)
+                .Include(n => n.Post).ThenInclude(p => p.Reports)
+                .Include(n => n.Post).ThenInclude(p => p.Comments).ThenInclude(c => c.User)
+                .Include(n => n.Post).ThenInclude(p => p.Likes).ThenInclude(l => l.User)
+                .Select(n => n.Post)
+                .ToListAsync();
+
+            return allFavoritePosts;
+        }
 
         public async Task AddPostCommentAsync(Comment comment)
         {
@@ -41,7 +56,7 @@ namespace DataAccess.Services
 
         public async Task<Post> CreatePostAsync(Post post)
         {
-           
+
             await _context.Posts.AddAsync(post);
             await _context.SaveChangesAsync();
 
@@ -146,5 +161,7 @@ namespace DataAccess.Services
                 await _context.SaveChangesAsync();
             }
         }
+
+
     }
 }
