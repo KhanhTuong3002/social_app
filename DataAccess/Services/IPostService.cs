@@ -11,6 +11,8 @@ namespace DataAccess.Services
     public interface IPostService
     {
         Task<List<Post>> GetAllPostsAsync(string loggedInUser);
+
+        Task<Post> GetPostByIdAsync(string postId);
         Task<List<Post>> GetAllFavoritePost(string loggedInUser);
         Task<Post> CreatePostAsync(Post post);
         Task<Post> RemovePostAsync(string postId);

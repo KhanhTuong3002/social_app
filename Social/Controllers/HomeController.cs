@@ -38,6 +38,14 @@ namespace Social.Controllers
             var Allposts = await _postService.GetAllPostsAsync(loggedInUser.ToString());
             return View(Allposts);
         }
+        public async Task<IActionResult> Details(string postId)
+        {
+            var post = await _postService.GetPostByIdAsync(postId);
+            return View(post); // It will look for Views/Home/Details.cshtml
+        }
+
+
+
         [HttpPost]
         public async Task<IActionResult> CreatePost(PostVM post)
         {

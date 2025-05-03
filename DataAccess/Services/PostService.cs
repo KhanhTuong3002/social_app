@@ -32,6 +32,18 @@ namespace DataAccess.Services
 
             return Allposts;
         }
+
+        public async Task<Post> GetPostByIdAsync(string postId)
+        {
+            var postDb = await _context.Posts
+              .Include(n => n.user)
+              .Include(n => n.Likes).ThenInclude(n => n.User)
+              .Include(n => n.Comments).ThenInclude(n => n.User)
+              .Include(n => n.Favorites).ThenInclude(n => n.User)
+              .FirstOrDefaultAsync(n => n.PostId == postId);
+            return postDb;
+        }
+
         public async Task<List<Post>> GetAllFavoritePost(string loggedInUser)
         {
             var allFavoritePosts = await _context.Favorites
@@ -162,6 +174,6 @@ namespace DataAccess.Services
             }
         }
 
-
+       
     }
 }
