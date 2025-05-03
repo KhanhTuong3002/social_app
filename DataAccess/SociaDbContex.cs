@@ -1,11 +1,13 @@
 ﻿
 using BussinessObject.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
 namespace DataAccess
 {
-    public class SociaDbContex : DbContext
+    public class SociaDbContex : IdentityDbContext<User, IdentityRole<string>,string>
     {
         public SociaDbContex() { }
         public SociaDbContex(DbContextOptions<SociaDbContex> options) : base(options)
@@ -39,7 +41,7 @@ namespace DataAccess
                 .IsRequired();
 
             modelBuilder.Entity<User>()
-                .Property(u => u.UserId)
+                .Property(u => u.Id)
                 .HasMaxLength(20)
                 .IsRequired();
 
@@ -120,7 +122,18 @@ namespace DataAccess
                 .HasForeignKey(l => l.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+
             base.OnModelCreating(modelBuilder);
+
+
+            //customize the ASP.Net Identity model table
+            modelBuilder.Entity<User>().ToTable("Users");
+            modelBuilder.Entity<IdentityRole<string>>().ToTable("Roles");
+            modelBuilder.Entity<IdentityUserRole<string>>().ToTable("UserRoles");
+            modelBuilder.Entity<IdentityUserClaim<string>>().ToTable("UserClaims");
+            modelBuilder.Entity<IdentityUserLogin<string>>().ToTable("UserLogins");
+            modelBuilder.Entity<IdentityUserToken<string>>().ToTable("UserTokens");
+            modelBuilder.Entity<IdentityRoleClaim<string>>().ToTable("RoleClaims");
 
         }
     }

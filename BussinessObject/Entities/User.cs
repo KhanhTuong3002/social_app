@@ -10,10 +10,8 @@ using System.Threading.Tasks;
 
 namespace BussinessObject.Entities
 {
-    public class User
+    public class User : IdentityUser<string>
     {
-        [Key]
-        public string UserId { get; set; } = SnowflakeGenerator.Generate();
         public string? FullName { get; set; }
         public DateTime DateOfBirth { get; set; }
         public string? AvatarUrl { get; set; }

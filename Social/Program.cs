@@ -1,3 +1,4 @@
+using BussinessObject.Entities;
 using DataAccess;
 using DataAccess.Helpers;
 using DataAccess.Services;
@@ -19,6 +20,14 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 /*builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<SociaDbContex>();*/
+
+builder.Services.AddIdentity<User, IdentityRole<string>>()
+   .AddEntityFrameworkStores<SociaDbContex>()
+   .AddDefaultTokenProviders();
+
+builder.Services.AddAuthentication();
+builder.Services.AddAuthorization();
+
 
 //Services Configuration
 builder.Services.AddScoped<IPostService, PostService>();

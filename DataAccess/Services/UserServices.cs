@@ -17,13 +17,13 @@ namespace DataAccess.Services
         }
         public async Task<User> GetUser(string loggedInUserId)
         {
-            return await _context.Users.FirstOrDefaultAsync(n => n.UserId == loggedInUserId) ?? new User();
+            return await _context.Users.FirstOrDefaultAsync(n => n.Id == loggedInUserId) ?? new User();
 
         }
 
         public async Task UpdateUserProfile(string loggedInUserId, string avatarUrl)
         {
-            var userDb = await _context.Users.FirstOrDefaultAsync(n => n.UserId == loggedInUserId);
+            var userDb = await _context.Users.FirstOrDefaultAsync(n => n.Id == loggedInUserId);
             if(userDb != null)
             {
                 userDb.AvatarUrl = avatarUrl;

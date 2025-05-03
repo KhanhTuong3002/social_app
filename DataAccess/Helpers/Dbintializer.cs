@@ -14,7 +14,7 @@ namespace DataAccess.Helpers
             {
                 var newUser = new User
                 {
-                    UserId = SnowflakeGenerator.Generate(),
+                    Id = SnowflakeGenerator.Generate(),
                     FullName = "Khanh Tuong",
                     DateOfBirth = new DateTime(1990, 1, 1),
                     AvatarUrl = "/images/logo2.png"
@@ -30,7 +30,7 @@ namespace DataAccess.Helpers
                     NrofRepost = 0,
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow,
-                    UserId = newUser.UserId,
+                    UserId = newUser.Id,
                 };
 
                 var newPostWithoutImage = new Post
@@ -40,7 +40,7 @@ namespace DataAccess.Helpers
                     NrofRepost = 0,
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow,
-                    UserId = newUser.UserId,
+                    UserId = newUser.Id,
                 };
 
                 await context.Posts.AddRangeAsync(newPostWithImage, newPostWithoutImage);
