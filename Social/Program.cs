@@ -17,9 +17,6 @@ builder.Services.AddDbContext<SociaDbContex>(options =>
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-/*builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<SociaDbContex>();*/
 
 builder.Services.AddIdentity<User, IdentityRole<string>>()
    .AddEntityFrameworkStores<SociaDbContex>()
@@ -50,6 +47,10 @@ using (var scope = app.Services.CreateScope())
     var context = scope.ServiceProvider.GetRequiredService<SociaDbContex>();
     await context.Database.MigrateAsync();
     await DbInitializer.SeedAsync(context);
+
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<string>>>();
+    await DbInitializer.SeedUserAndRoleAsync(userManager, roleManager);
 }
 
 // Configure the HTTP request pipeline
