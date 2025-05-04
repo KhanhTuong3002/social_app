@@ -39,6 +39,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="wwwroot\images\welcome\" />
     <Folder Include="wwwroot\images\Uploaded\" />
     <Folder Include="wwwroot\images\placeholders\" />
   </ItemGroup>
