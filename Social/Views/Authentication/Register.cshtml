@@ -19,24 +19,28 @@
                         <label  >First name</label>
                         <div class="mt-2.5">
                             <input id="firstName" asp-for="FirstName" name="firstName" type="text" placeholder="First name" required="" class="!w-full" />
+                            <span asp-validation-for="FirstName" class="text-red-500 text-xs mt-1"></span>
                         </div>
                     </div>
                     <div>
                         <label asp-for="LastName">Last name</label>
                         <div class="mt-2.5">
                             <input id="lastName" asp-for="LastName" name="lastName" type="text" placeholder="Last name" required="" class="!w-full" />
+                            <span asp-validation-for="LastName" class="text-red-500 text-xs mt-1"></span>
                         </div>
                     </div>
                     <div class="col-span-2">
                         <label asp-for="Email">Email address</label>
                         <div class="mt-2.5">
                             <input id="email" asp-for="Email" name="email" type="email" placeholder="Email" required="" class="!w-full" />
+                            <span asp-validation-for="Email" class="text-red-500 text-xs mt-1"></span>  
                         </div>
                     </div>
                     <div>
                         <label asp-for="Password">Password</label>
                         <div class="mt-2.5">
                             <input id="password" asp-for="Password" name="password" type="password" placeholder="***" required="" class="!w-full" />
+                            <span asp-validation-for="Password" class="text-red-500 text-xs mt-1"></span>
                         </div>
                     </div>
 
@@ -44,6 +48,7 @@
                         <label asp-for="ConfirmPassword">Confirm password</label>
                         <div class="mt-2.5">
                             <input id="confirmPassword" asp-for="ConfirmPassword" name="confirmPassword" type="password" placeholder="***" required="" class="!w-full" />
+                            <span asp-validation-for="ConfirmPassword" class="text-red-500 text-xs mt-1"></span>
                         </div>
                     </div>
 
