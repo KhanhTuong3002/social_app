@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Social_App.ViewModel.Authentication;
+using System.Security.Claims;
 
 namespace Social_App.Controllers
 {
@@ -32,10 +33,22 @@ namespace Social_App.Controllers
         {
             if (!ModelState.IsValid)
                 return View(loginVM);
+            var existingUser = await _userManager.FindByEmailAsync(loginVM.Email);
+            if(existingUser == null)
+            {
+                ModelState.AddModelError(string.Empty, "Invalid Email or Password. Please try agian");
+                return View(loginVM);
+            }
+
+
+            var existingUserClaims = await _userManager.GetClaimsAsync(existingUser);
+            if (!existingUserClaims.Any(c => c.Type == CustomClaim.FullName))
+                await _userManager.AddClaimAsync(existingUser, new Claim(CustomClaim.FullName, existingUser.FullName));
 
             var result = await _signInManager.PasswordSignInAsync(loginVM.Email, loginVM.Password, isPersistent: false, lockoutOnFailure: false);
-            if (result.Succeeded)           
-                return RedirectToAction("Index", "Home");
+
+            if (result.Succeeded)                                          
+                return RedirectToAction("Index", "Home");                         
             ModelState.AddModelError(string.Empty, "Invalid login attempt");
             return View(loginVM);
         }
@@ -69,7 +82,7 @@ namespace Social_App.Controllers
             if (result.Succeeded)
             {
                 await _userManager.AddToRoleAsync(newUser, AppRoles.User);
-
+                await _userManager.AddClaimAsync(newUser, new Claim(CustomClaim.FullName, newUser.FullName));
                 await _signInManager.SignInAsync(newUser, isPersistent: false);
                 return RedirectToAction("Index", "Home");
             }
