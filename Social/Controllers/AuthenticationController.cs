@@ -99,7 +99,23 @@ namespace Social_App.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdatePassWord(UpdatePassWordVM updatePassWordVM)
         {
-            if(updatePassWordVM.NewPassword != updatePassWordVM.ConfirmPassword)
+            if (!ModelState.IsValid)
+            {
+                // Lấy lỗi của NewPassword (nếu có)
+                var newPasswordError = ModelState["NewPassword"]?.Errors.FirstOrDefault()?.ErrorMessage;
+                if (!string.IsNullOrEmpty(newPasswordError))
+                {
+                    TempData["PasswordError"] = newPasswordError;
+                }
+                else
+                {
+                    TempData["PasswordError"] = "Invalid input";
+                }
+                TempData["ActiveTab"] = "Password";
+                return RedirectToAction("Index", "Settings");
+            }
+
+            if (updatePassWordVM.NewPassword != updatePassWordVM.ConfirmPassword)
             {
                 TempData["PasswordError"] = "Password and Confirm Password do not match";
                 TempData["ActiveTab"] = "Password";
