@@ -5,9 +5,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Social_App.ViewModel.Stories;
 using DataAccess.Helpers.Enums;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Social_App.Controllers
 {
+    [Authorize]
     public class StoriesController : Controller
     {
         public readonly IStoriesServices _storiesServices;

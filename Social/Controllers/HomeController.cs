@@ -4,6 +4,7 @@ using DataAccess;
 using DataAccess.Helpers;
 using DataAccess.Helpers.Enums;
 using DataAccess.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Social.Models;
@@ -12,6 +13,7 @@ using System.Diagnostics;
 
 namespace Social.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;

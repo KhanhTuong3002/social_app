@@ -1,6 +1,9 @@
 ﻿using BussinessObject;
 using BussinessObject.Entities;
 using DataAccess.Helpers.Constants;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Social_App.ViewModel.Authentication;
@@ -17,6 +20,8 @@ namespace Social_App.Controllers
             _signInManager = signInManager;
         }
 
+        [HttpGet]
+        [RedirectIfAuthenticated]
         public async Task<IActionResult> Login()
         {
             return View();
@@ -34,6 +39,8 @@ namespace Social_App.Controllers
             ModelState.AddModelError(string.Empty, "Invalid login attempt");
             return View(loginVM);
         }
+        [HttpGet]
+        [RedirectIfAuthenticated]
         public async Task<IActionResult> Register()
         {
             return View();
@@ -71,6 +78,12 @@ namespace Social_App.Controllers
                 ModelState.AddModelError(string.Empty, error.Description);
             }
             return View(registerVM);
+        }
+        [Authorize]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return RedirectToAction("Login");
         }
     }
 }

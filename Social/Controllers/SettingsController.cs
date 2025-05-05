@@ -1,10 +1,12 @@
 ﻿using DataAccess.Helpers.Enums;
 using DataAccess.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Social_App.ViewModel.Settings;
 
 namespace Social_App.Controllers
 {
+    [Authorize]
     public class SettingsController : Controller
     {
         private readonly IUserServices _userServices;

@@ -2,6 +2,7 @@ using BussinessObject.Entities;
 using DataAccess;
 using DataAccess.Helpers;
 using DataAccess.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,12 +18,23 @@ builder.Services.AddDbContext<SociaDbContex>(options =>
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-
+// Identity Configuration
 builder.Services.AddIdentity<User, IdentityRole<string>>()
+
    .AddEntityFrameworkStores<SociaDbContex>()
    .AddDefaultTokenProviders();
 
-builder.Services.AddAuthentication();
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Authentication/Login";
+    options.AccessDeniedPath = "/Authentication/AccessDenied";
+});
+
+/*builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
+{
+    options.LoginPath = "/Authentication/Login";
+    options.AccessDeniedPath = "/Authentication/AccessDenied";
+});*/
 builder.Services.AddAuthorization();
 
 
