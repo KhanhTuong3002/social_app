@@ -16,11 +16,24 @@ namespace Social_App.Controllers
             _userManager = userManager;
             _signInManager = signInManager;
         }
+
         public async Task<IActionResult> Login()
         {
             return View();
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Login(LoginVM loginVM)
+        {
+            if (!ModelState.IsValid)
+                return View(loginVM);
+
+            var result = await _signInManager.PasswordSignInAsync(loginVM.Email, loginVM.Password, isPersistent: false, lockoutOnFailure: false);
+            if (result.Succeeded)           
+                return RedirectToAction("Index", "Home");
+            ModelState.AddModelError(string.Empty, "Invalid login attempt");
+            return View(loginVM);
+        }
         public async Task<IActionResult> Register()
         {
             return View();
@@ -45,10 +58,6 @@ namespace Social_App.Controllers
                 ModelState.AddModelError("Email", "Email already exists");
                 return View(registerVM);
             }
-
-
-
-
             var result = await _userManager.CreateAsync(newUser, registerVM.Password);
             if (result.Succeeded)
             {
@@ -57,7 +66,11 @@ namespace Social_App.Controllers
                 await _signInManager.SignInAsync(newUser, isPersistent: false);
                 return RedirectToAction("Index", "Home");
             }
-            return View();
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+            return View(registerVM);
         }
     }
 }
