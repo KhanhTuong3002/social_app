@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Social_App.ViewModel.Authentication;
 using System.Security.Claims;
+using Social_App.ViewModel.Settings;
 
 namespace Social_App.Controllers
 {
@@ -92,6 +93,47 @@ namespace Social_App.Controllers
             }
             return View(registerVM);
         }
+
+
+
+        [HttpPost]
+        public async Task<IActionResult> UpdatePassWord(UpdatePassWordVM updatePassWordVM)
+        {
+            if(updatePassWordVM.NewPassword != updatePassWordVM.ConfirmPassword)
+            {
+                TempData["PasswordError"] = "Password and Confirm Password do not match";
+                TempData["ActiveTab"] = "Password";
+                return RedirectToAction("Index", "Settings");
+            }
+
+            var loggedInUser = await _userManager.GetUserAsync(User);
+            var IsCurrentPasswordValid = await _userManager.CheckPasswordAsync(loggedInUser,
+                updatePassWordVM.CurrentPassword);
+            if (!IsCurrentPasswordValid)
+            {
+                TempData["PasswordError"] = "Current Password is incorrect";
+                TempData["ActiveTab"] = "Password";
+                return RedirectToAction("Index", "Settings");
+            }
+            if (updatePassWordVM.NewPassword == updatePassWordVM.CurrentPassword)
+            {
+                TempData["PasswordError"] = "New password must be different from the current password";
+                TempData["ActiveTab"] = "Password";
+                return RedirectToAction("Index", "Settings");
+            }
+            var result = await _userManager.ChangePasswordAsync(loggedInUser,
+                updatePassWordVM.CurrentPassword, updatePassWordVM.NewPassword);
+            if (result.Succeeded)
+            {
+                TempData["PasswordSuccess"] = "Password updated successfully";
+                TempData["ActiveTab"] = "Password";
+                await _signInManager.RefreshSignInAsync(loggedInUser);
+               
+            }
+
+            return RedirectToAction("Index", "Settings");
+        }
+
         [Authorize]
         public async Task<IActionResult> Logout()
         {

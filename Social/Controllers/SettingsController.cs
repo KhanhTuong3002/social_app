@@ -40,11 +40,6 @@ namespace Social_App.Controllers
             return RedirectToAction("Index");   
         }
 
-        [HttpPost]
-        public async Task<IActionResult> UpdatePassWord(UpdatePassWordVM updatePassWordVM)
-        {
-            return RedirectToAction("Index");
-        }
     }
 }
 
