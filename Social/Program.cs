@@ -24,18 +24,33 @@ builder.Services.AddIdentity<User, IdentityRole<string>>()
    .AddEntityFrameworkStores<SociaDbContex>()
    .AddDefaultTokenProviders();
 
+builder.Configuration
+    .AddJsonFile("appsettings.json")
+    .AddUserSecrets<Program>();
+
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Authentication/Login";
     options.AccessDeniedPath = "/Authentication/AccessDenied";
 });
 
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddGoogle(options =>
+builder.Services.AddAuthentication(options =>
 {
-    options.ClientId = builder.Configuration["Auth:Google:ClientId"];
-    options.ClientSecret = builder.Configuration["Auth:Google:ClientSecret"];
-    options.CallbackPath = "/signin-google";
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = "Google";
+})
+.AddCookie()
+.AddGoogle("Google", googleOptions =>
+{
+    googleOptions.ClientId = builder.Configuration["Auth:Google:ClientId"]
+        ?? Environment.GetEnvironmentVariable("GOOGLE_CLIENT_ID");
+
+    googleOptions.ClientSecret = builder.Configuration["Auth:Google:ClientSecret"]
+        ?? Environment.GetEnvironmentVariable("GOOGLE_CLIENT_SECRET");
+
+    googleOptions.CallbackPath = "/signin-google";
 });
+
 builder.Services.AddAuthorization();
 
 
