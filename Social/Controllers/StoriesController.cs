@@ -1,16 +1,15 @@
 ﻿using BussinessObject.Entities;
-using DataAccess;
 using DataAccess.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Social_App.ViewModel.Stories;
 using DataAccess.Helpers.Enums;
 using Microsoft.AspNetCore.Authorization;
+using Social_App.Controllers.Base;
 
 namespace Social_App.Controllers
 {
     [Authorize]
-    public class StoriesController : Controller
+    public class StoriesController : BaseController
     {
         public readonly IStoriesServices _storiesServices;
         public readonly IFileServices _fileServices;
@@ -24,8 +23,9 @@ namespace Social_App.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateStory(StoryVM storyVM)
         {
-            long loggedInUser = 175215637272985601;
-            
+            var loggedInUser = GetUserId();
+            if (loggedInUser == null) return RedirectToLogin();
+
             var imageUploadPath = await _fileServices.UploadFileAsync(storyVM.Image,ImageFileType.storyImage);
 
             var newStory = new Story()

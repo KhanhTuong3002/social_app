@@ -1,20 +1,16 @@
-using BussinessObject;
 using BussinessObject.Entities;
-using DataAccess;
-using DataAccess.Helpers;
 using DataAccess.Helpers.Enums;
 using DataAccess.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Social.Models;
+using Social_App.Controllers.Base;
 using Social_App.ViewModel.Home;
-using System.Diagnostics;
+using System.Security.Claims;
 
 namespace Social.Controllers
 {
     [Authorize]
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
         private readonly ILogger<HomeController> _logger;
        // private readonly SociaDbContex _context;
@@ -35,9 +31,10 @@ namespace Social.Controllers
 
         public async Task<IActionResult> Index()
         {
-            long loggedInUser = 175215637272985601;
+            var loggedInUser = GetUserId();
+            if (loggedInUser == null) return RedirectToLogin();
 
-            var Allposts = await _postService.GetAllPostsAsync(loggedInUser.ToString());
+            var Allposts = await _postService.GetAllPostsAsync(loggedInUser);
             return View(Allposts);
         }
         public async Task<IActionResult> Details(string postId)
@@ -52,7 +49,8 @@ namespace Social.Controllers
         public async Task<IActionResult> CreatePost(PostVM post)
         {
             // get the logged user
-            long loggedInUser = 175215637272985601;
+            var loggedInUser = GetUserId();
+            if (loggedInUser == null) return RedirectToLogin();
 
             var imageUploadPath = await _fileServices.UploadFileAsync(post.image, ImageFileType.postImage);
 
@@ -64,7 +62,7 @@ namespace Social.Controllers
                 UpdatedAt = DateTime.UtcNow,
                 ImageUrl = imageUploadPath,
                 NrofRepost = 0,
-                UserId = loggedInUser.ToString(),
+                UserId = loggedInUser,
             };
 
             // check if the user uploaded an image
@@ -79,8 +77,9 @@ namespace Social.Controllers
 
         public async Task<IActionResult> TogglePostLike(PostLikeVM postLikeVM)
         {
-            long loggedInUser = 175215637272985601;
-            await _postService.TogglePostLikeAsync(postLikeVM.PostId, loggedInUser.ToString());
+            var loggedInUser = GetUserId();
+            if (loggedInUser == null) return RedirectToLogin();
+            await _postService.TogglePostLikeAsync(postLikeVM.PostId, loggedInUser);
 
             return RedirectToAction("Index");
 
@@ -90,9 +89,10 @@ namespace Social.Controllers
 
         public async Task<IActionResult> TogglePostFavorite(PostFavoriteVM postFavoriteVM)
         {
-            long loggedInUser = 175215637272985601;
+            var loggedInUser = GetUserId();
+            if (loggedInUser == null) return RedirectToLogin();
 
-            await _postService.TogglePostFavoriteAsync(postFavoriteVM.PostId, loggedInUser.ToString());
+            await _postService.TogglePostFavoriteAsync(postFavoriteVM.PostId, loggedInUser);
             return RedirectToAction("Index");
 
         }
@@ -101,8 +101,9 @@ namespace Social.Controllers
 
         public async Task<IActionResult> TogglePostVisibility(PostVisibilityVM postVisibilityVM)
         {
-            long loggedInUser = 175215637272985601;
-            await _postService.TogglePostVisibilityAsync(postVisibilityVM.PostId, loggedInUser.ToString());
+            var loggedInUser = GetUserId();
+            if (loggedInUser == null) return RedirectToLogin();
+            await _postService.TogglePostVisibilityAsync(postVisibilityVM.PostId, loggedInUser);
 
             return RedirectToAction("Index");
 
@@ -111,8 +112,8 @@ namespace Social.Controllers
         [HttpPost]
         public async Task<IActionResult> AddPostComment(PostCommentPM commentVM)
         {
-            long loggedInUser = 175215637272985601;
- 
+            var loggedInUser = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
             //create a new comment
             var newComment = new Comment()
             {
@@ -120,7 +121,7 @@ namespace Social.Controllers
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow,
                 PostId = commentVM.PostId,
-                UserId = loggedInUser.ToString(),
+                UserId = loggedInUser,
             };
 
             await _postService.AddPostCommentAsync(newComment);
@@ -131,8 +132,9 @@ namespace Social.Controllers
         [HttpPost]
         public async Task<IActionResult> AddPostReport(PostReportVM postReportVM)
         {
-            long loggedInUser = 175215637272985601;
-            await _postService.ReportPostAsync(postReportVM.PostId, loggedInUser.ToString());
+            var loggedInUser = GetUserId();
+            if (loggedInUser == null) return RedirectToLogin();
+            await _postService.ReportPostAsync(postReportVM.PostId, loggedInUser);
 
             // redirect to the index page
             return RedirectToAction("Index");

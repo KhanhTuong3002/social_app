@@ -1,6 +1,7 @@
 ﻿using DataAccess.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Social_App.Controllers
 {
@@ -14,8 +15,8 @@ namespace Social_App.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            long loggedInUser = 175215637272985601;
-            var myFavoritePosts = await _postService.GetAllFavoritePost(loggedInUser.ToString());
+            var loggedInUser = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var myFavoritePosts = await _postService.GetAllFavoritePost(loggedInUser);
             return View(myFavoritePosts);
         }
     }

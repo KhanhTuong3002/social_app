@@ -46,7 +46,7 @@ namespace Social_App.Controllers
             if (!existingUserClaims.Any(c => c.Type == CustomClaim.FullName))
                 await _userManager.AddClaimAsync(existingUser, new Claim(CustomClaim.FullName, existingUser.FullName));
 
-            var result = await _signInManager.PasswordSignInAsync(loginVM.Email, loginVM.Password, isPersistent: false, lockoutOnFailure: false);
+            var result = await _signInManager.PasswordSignInAsync(existingUser.UserName, loginVM.Password, isPersistent: false, lockoutOnFailure: false);
 
             if (result.Succeeded)                                          
                 return RedirectToAction("Index", "Home");                         
@@ -147,6 +147,35 @@ namespace Social_App.Controllers
                
             }
 
+            return RedirectToAction("Index", "Settings");
+        }
+
+        [HttpPost]
+
+        public async Task<IActionResult> UpdateProfile(ProfileVm profileVm)
+        {
+            var loggedInUser = await _userManager.GetUserAsync(User);
+            if (!ModelState.IsValid)
+            {
+                TempData["ProfileError"] = "Invalid input";
+                TempData["ActiveTab"] = "Profile";
+                return RedirectToAction("Index", "Settings");
+            }
+            if(loggedInUser == null)
+                return RedirectToAction("Login");
+            loggedInUser.FullName = profileVm.FullName;
+            loggedInUser.UserName = profileVm.UserName;
+            loggedInUser.Bio = profileVm.Bio;
+
+            var result = await _userManager.UpdateAsync(loggedInUser);
+            if(!result.Succeeded)
+            {
+                TempData["ProfileError"] = string.Join("; ", result.Errors.Select(e => e.Description));
+                TempData["ActiveTab"] = "Profile";
+              
+            }
+            TempData["ProfileErrorSuccessfull"] = "Profile updated successfully";
+           await _signInManager.RefreshSignInAsync(loggedInUser);
             return RedirectToAction("Index", "Settings");
         }
 
