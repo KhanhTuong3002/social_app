@@ -6,12 +6,12 @@ namespace Social_App.ViewModel.Authentication
     {
         [Required(ErrorMessage ="First Name is required")]
         [StringLength(50, MinimumLength = 2, ErrorMessage = "First Name must be between 2 and 50 characters.")]
-        [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "First Name can only contain letters.")]
+        [RegularExpression(@"^(?!.*\b[aA][dD][mM][iI][nN]\b)[a-zA-Z]+$", ErrorMessage = "First Name can only contain letters and cannot contain 'admin'.")]
         public string FirstName { get; set; }
 
         [Required(ErrorMessage = "Last Name is required")]
         [StringLength(50, MinimumLength = 2, ErrorMessage = "Last Name must be between 2 and 50 characters.")]
-        [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Last Name can only contain letters.")]
+        [RegularExpression(@"^(?!.*\b[aA][dD][mM][iI][nN]\b)[a-zA-Z]+$", ErrorMessage = "First Name can only contain letters and cannot contain 'admin'.")]
         public string LastName { get; set; }
 
         [Required(ErrorMessage = "Email is required")]
@@ -27,5 +27,6 @@ namespace Social_App.ViewModel.Authentication
         [Required(ErrorMessage = "Confirm Password is required")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
+
     }
 }

@@ -157,7 +157,7 @@ namespace Social_App.Controllers
             var loggedInUser = await _userManager.GetUserAsync(User);
             if (!ModelState.IsValid)
             {
-                TempData["ProfileError"] = "Invalid input";
+                TempData["ProfileError"] = "Input can only contain letters and cannot Contain 'admin'";
                 TempData["ActiveTab"] = "Profile";
                 return RedirectToAction("Index", "Settings");
             }
