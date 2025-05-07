@@ -25,12 +25,12 @@
 
     @* Post heading *@
     <div class="flex gap-3 sm:p-4 p-2.5 text-sm font-medium">
-        <a>
+        <a asp-controller="Users" asp-action="Details" asp-route-userid="@Model.UserId">
             <img src="@(!string.IsNullOrEmpty(Model.user.AvatarUrl)? Url.Content
              ("~/"+Model.user.AvatarUrl): defaultAvatarUrl)" class="w-9 h-9 rounded-full" />
         </a>
         <div class="flex-1">
-            <a>
+            <a asp-controller="Users" asp-action="Details" asp-route-userid="@Model.UserId">
                 <h4 class="text-black">@Model.user.FullName</h4>
                 <div class="text-xs text-gray-500/80" title="@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")">@displayTime</div>
             </a>
@@ -141,13 +141,14 @@
                     _ => "Just now"
                 };
                 <div class="flex items-start gap-3 relative">
-                    <a>
+                    <a asp-controller="Users" asp-action="Details" asp-route-userid="@comment.UserId">
                         <img src="@(!string.IsNullOrEmpty(comment.User.AvatarUrl) ?Url.Content
                         ("~/"+comment.User.AvatarUrl) :defaultAvatarUrl)" class="w-6 h-6 mt-1 rounded-full" />
                     </a>
                     <div class="flex-1">
                         <div class="flex justify-content-between">
-                            <a class="text-black font-medium inline-block flex-grow">
+                            <a asp-controller="Users" asp-action="Details" asp-route-userid="@comment.UserId"
+                                class="text-black font-medium inline-block flex-grow">
                                 @comment.User.FullName
                             </a>
                             <small>
@@ -182,7 +183,10 @@
 
         <form asp-controller="Home" asp-action="AddPostComment">
             <div class="sm:px-4 sm:py-3 p-2.5 border-t border-gray-100 flex items-center gap-1">
-                <img src="@defaultAvatarUrl" class="w-6 h-6 rounded-full" />
+                <a asp-controller="Users" asp-action="Details" asp-route-userid="@Model.UserId">
+                    <img src="@(string.IsNullOrEmpty(Model.user.AvatarUrl) ? defaultAvatarUrl
+                : Url.Content(Model.user.AvatarUrl))" class="w-6 h-6 rounded-full" />
+                </a>
 
                 <input type="hidden" name="postId" value="@Model.PostId" />
                 <div class="flex-1 relative overflow-hidden h-10">
