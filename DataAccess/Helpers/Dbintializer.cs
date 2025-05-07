@@ -46,7 +46,7 @@ namespace DataAccess.Helpers
                 {
                     Id = SnowflakeGenerator.Generate(),
                     UserName = "User001",
-                    Email = "Votuongpro2017@gmail.com",
+                    Email = "tuongpro2017@gmail.com",
                     FullName = "Khanh Tuong",
                     AvatarUrl = "/images/logo.png",
                     EmailConfirmed = true,

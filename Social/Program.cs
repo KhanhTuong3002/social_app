@@ -3,8 +3,10 @@ using DataAccess;
 using DataAccess.Helpers;
 using DataAccess.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,6 +37,13 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     options.ClientId = builder.Configuration["Auth:Google:ClientId"];
     options.ClientSecret = builder.Configuration["Auth:Google:ClientSecret"];
     options.CallbackPath = "/signin-google";
+})
+.AddGitHub(options =>
+{
+        options.ClientId = builder.Configuration["Auth:Github:ClientId"];
+        options.ClientSecret = builder.Configuration["Auth:Github:ClientSecret"];
+        options.Scope.Add("user:email");
+        options.CallbackPath = "/signin-github";
 });
 builder.Services.AddAuthorization();
 

@@ -191,16 +191,26 @@ namespace Social_App.Controllers
             if (info == null)
                 return RedirectToAction("Login");
 
-            var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+            // Lấy email từ nhiều provider (Google dùng ClaimTypes.Email, GitHub dùng "urn:github:email")
+            var email = info.Principal.FindFirstValue(ClaimTypes.Email)
+                ?? info.Principal.Claims.FirstOrDefault(c => c.Type == "urn:github:email")?.Value;
+
+            if (string.IsNullOrEmpty(email))
+                return RedirectToAction("Login");
+
             var user = await _userManager.FindByEmailAsync(email);
 
             if (user == null)
             {
+                var fullName = info.Principal.FindFirstValue(ClaimTypes.Name)
+                    ?? info.Principal.Claims.FirstOrDefault(c => c.Type == "name")?.Value;
+
                 var newUser = new User()
                 {
+                    Id = SnowflakeGenerator.Generate(),
                     Email = email,
                     UserName = email,
-                    FullName = info.Principal.FindFirstValue(ClaimTypes.Name),
+                    FullName = fullName ?? email,
                     EmailConfirmed = true
                 };
                 var result = await _userManager.CreateAsync(newUser);
@@ -209,7 +219,6 @@ namespace Social_App.Controllers
                     await _userManager.AddToRoleAsync(newUser, AppRoles.User);
                     await _userManager.AddClaimAsync(newUser, new Claim(CustomClaim.FullName, newUser.FullName));
                     await _signInManager.SignInAsync(newUser, isPersistent: false);
-
                     return RedirectToAction("Index", "Home");
                 }
             }
@@ -217,6 +226,9 @@ namespace Social_App.Controllers
             await _signInManager.SignInAsync(user, isPersistent: false);
             return RedirectToAction("Index", "Home");
         }
+
+
+
 
         [Authorize]
         public async Task<IActionResult> Logout()
