@@ -21,6 +21,22 @@ namespace DataAccess.Services
 
         }
 
+        public async Task<List<Post>> GetUserPosts(string userId)
+        {
+            var Allposts = await _context.Posts
+                .Where(n => n.UserId == userId && n.Reports.Count < 5 && !n.IsDeleted)//restore a post to be public
+                /*.Where(n => !n.isPrivate)*/
+                .Include(n => n.user)
+                .Include(n => n.Likes).ThenInclude(n => n.User)
+                .Include(n => n.Comments).ThenInclude(n => n.User)
+                .Include(n => n.Favorites).ThenInclude(n => n.User)
+                .Include(n => n.Reports).ThenInclude(n => n.User)
+                .OrderByDescending(n => n.CreatedAt)
+                .ToListAsync();
+
+            return Allposts;
+        }
+
         public async Task UpdateUserProfile(string loggedInUserId, string avatarUrl)
         {
             var userDb = await _context.Users.FirstOrDefaultAsync(n => n.Id == loggedInUserId);

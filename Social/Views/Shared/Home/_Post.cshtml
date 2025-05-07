@@ -16,6 +16,9 @@
     bool isReported = Model.Reports.Any(n => n.UserId == loggedInUserId);
 
     string defaultAvatarUrl = Url.Content("~/images/avatar/user.png");
+    var avatarPath = string.IsNullOrEmpty(Model.user.AvatarUrl)
+       ? defaultAvatarUrl
+       : Url.Content(Model.user.AvatarUrl.StartsWith("~") ? Model.user.AvatarUrl : "~/" + Model.user.AvatarUrl);
     bool showAllComments = ViewData["showAllComment"] as bool? ?? false;
 
     
@@ -184,8 +187,7 @@
         <form asp-controller="Home" asp-action="AddPostComment">
             <div class="sm:px-4 sm:py-3 p-2.5 border-t border-gray-100 flex items-center gap-1">
                 <a asp-controller="Users" asp-action="Details" asp-route-userid="@Model.UserId">
-                    <img src="@(string.IsNullOrEmpty(Model.user.AvatarUrl) ? defaultAvatarUrl
-                : Url.Content(Model.user.AvatarUrl))" class="w-6 h-6 rounded-full" />
+                    <img src="@avatarPath" class="w-6 h-6 rounded-full" />
                 </a>
 
                 <input type="hidden" name="postId" value="@Model.PostId" />
