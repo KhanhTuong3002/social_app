@@ -11,6 +11,12 @@
             </div>
 
             <form asp-controller="Authentication" asp-action="Login" method="post" class="space-y-7 text-sm text-black font-medium">
+                @if (TempData["LoginError"] != null)
+                {
+                    <div class="text-red-500 mb-4">
+                        @TempData["LoginError"]
+                    </div>
+                }
                 <div class="col-span-2 text-red-500" asp-validation-summary="ModelOnly"></div>
                 <div>
                     <label asp-for="Email">Email address</label>

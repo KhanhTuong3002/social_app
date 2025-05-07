@@ -194,12 +194,17 @@ namespace Social_App.Controllers
             // Lấy email từ nhiều provider (Google dùng ClaimTypes.Email, GitHub dùng "urn:github:email")
             var email = info.Principal.FindFirstValue(ClaimTypes.Email)
                 ?? info.Principal.Claims.FirstOrDefault(c => c.Type == "urn:github:email")?.Value;
+            // lưu avatar
+            var avatarUrl = info.Principal.FindFirstValue("urn:google:picture")
+                 ?? info.Principal.FindFirstValue("urn:github:avatar");
 
             if (string.IsNullOrEmpty(email))
+            {
+                TempData["LoginError"] = "Loggin failed! Are you setting email is private, Please set your email GitHub is public ";
                 return RedirectToAction("Login");
+            }
 
             var user = await _userManager.FindByEmailAsync(email);
-
             if (user == null)
             {
                 var fullName = info.Principal.FindFirstValue(ClaimTypes.Name)
@@ -211,6 +216,7 @@ namespace Social_App.Controllers
                     Email = email,
                     UserName = email,
                     FullName = fullName ?? email,
+                    AvatarUrl = avatarUrl,
                     EmailConfirmed = true
                 };
                 var result = await _userManager.CreateAsync(newUser);
