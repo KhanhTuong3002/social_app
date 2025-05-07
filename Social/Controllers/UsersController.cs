@@ -1,15 +1,20 @@
-﻿using DataAccess.Services;
+﻿using BussinessObject.Entities;
+using DataAccess.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Social_App.Controllers.Base;
+using Social_App.ViewModel.Users;
 
 namespace Social_App.Controllers
 {
     public class UsersController : BaseController
     {
         private readonly IUserServices _userServices;
-        public UsersController(IUserServices userServices)
+        private readonly UserManager<User> _userManager;
+        public UsersController(IUserServices userServices, UserManager<User> userManager)
         {
             _userServices = userServices;
+            _userManager = userManager;
         }
         public IActionResult Index()
         {
@@ -17,8 +22,15 @@ namespace Social_App.Controllers
         }
         public async Task<IActionResult> Details(string userid)
         {
-           var userPosts = await _userServices.GetUserPosts(userid);
-            return View(userPosts);
+            var user = await _userManager.FindByIdAsync(userid);
+            var userPosts = await _userServices.GetUserPosts(userid);
+
+            var userPofileVM = new GetUserProfileVM()
+            {
+                User = user,
+                Posts = userPosts
+            };
+            return View(userPofileVM);
         }
     }
 }
