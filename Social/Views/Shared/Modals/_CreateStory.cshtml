@@ -41,10 +41,6 @@
     </div>
 </div>
 <script>
-
-    document.getElementById('storyUploadBtn').addEventListener('click', function () {
-        document.getElementById('storyUpload').click();
-    });
     document.getElementById('storyUpload').addEventListener('change', (event) => {
         const file = event.target.files[0];
         const storyPreview = document.getElementById('storyPreview');
@@ -59,5 +55,4 @@
             storyPreview.src = "";
         }
     });
-
 </script>
