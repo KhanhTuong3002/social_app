@@ -32,6 +32,9 @@ namespace DataAccess
         public DbSet<Report> Reports { get; set; }
         public DbSet<Story> Stories { get; set; }
         public DbSet<HashTag> HashTags { get; set; }
+        public DbSet<FriendRequest> FriendRequests { get; set; }
+        public DbSet<FriendShip> FriendShips { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -135,6 +138,31 @@ namespace DataAccess
             modelBuilder.Entity<IdentityUserToken<string>>().ToTable("UserTokens");
             modelBuilder.Entity<IdentityRoleClaim<string>>().ToTable("RoleClaims");
 
+            // Configure the FriendRequest entity
+
+            modelBuilder.Entity<FriendRequest>()
+               .HasOne(fr => fr.sender)
+               .WithMany()
+               .HasForeignKey(fr => fr.SenderId)
+               .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<FriendRequest>()
+                .HasOne(fr => fr.receiver)
+                .WithMany()
+                .HasForeignKey(fr => fr.ReceiverId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<FriendShip>()
+                .HasOne(fs => fs.Sender)
+                .WithMany()
+                .HasForeignKey(fs => fs.SenderId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<FriendShip>()
+                .HasOne(fs => fs.Receiver)
+                .WithMany()
+                .HasForeignKey(fs => fs.ReceiverId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

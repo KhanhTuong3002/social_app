@@ -53,6 +53,7 @@ builder.Services.AddScoped<IHashtagServices, HashtagServices>();
 builder.Services.AddScoped<IStoriesServices, StoriesServices>();
 builder.Services.AddScoped<IFileServices, FileServices>();
 builder.Services.AddScoped<IUserServices, UserServices>();
+builder.Services.AddScoped<IFriendService, FriendService>();
 
 
 builder.Services.AddScoped<DbContext, SociaDbContex>();
