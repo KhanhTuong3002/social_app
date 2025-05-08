@@ -1,6 +1,7 @@
 ﻿using DataAccess.Services;
 using Microsoft.AspNetCore.Mvc;
 using Social_App.Controllers.Base;
+using Social_App.ViewModel.Friends;
 
 namespace Social_App.Controllers
 {
@@ -11,8 +12,16 @@ namespace Social_App.Controllers
         {
             _friendService = friendService;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            var userId = GetUserId();
+            if (string.IsNullOrEmpty(userId)) RedirectToLogin();
+
+            var friendsData = new FriendshipVM()
+            {
+                FriendRequestSent = await _friendService.GetFriendRequestsAsync(userId)
+            };
+
             return View();
         }
         [HttpPost]

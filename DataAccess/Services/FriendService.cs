@@ -1,15 +1,7 @@
-﻿using BussinessObject;
-using BussinessObject.Entities;
+﻿using BussinessObject.Entities;
 using DataAccess.Dtos;
 using DataAccess.Helpers.Constants;
-using DataAccess.Helpers.Enums;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataAccess.Services
 {
@@ -100,6 +92,15 @@ namespace DataAccess.Services
             }
         }
 
+        public async Task<List<FriendRequest>> GetFriendRequestsAsync(string userId)
+        {
+          var friendRequestsSent = await _sociaDbContex.FriendRequests
+                .Include(n => n.sender)
+                .Include(n => n.receiver)
+                .Where(f => f.SenderId == userId && f.Status == FriendShipStatus.Pending)
+                .ToListAsync();
 
+            return friendRequestsSent;
+        }
     }
 }
