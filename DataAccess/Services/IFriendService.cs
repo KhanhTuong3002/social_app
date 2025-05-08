@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BussinessObject.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,6 +14,8 @@ namespace DataAccess.Services
         Task UpdateRequestAsync(string requestId, string status);
 
         Task RemoveFriendAsync(string friendShipId);
+
+        Task<List<User>> GetSuggestedFriendsAsync(string userId);
 
     }
 }

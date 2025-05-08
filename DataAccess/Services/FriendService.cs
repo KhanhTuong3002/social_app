@@ -19,6 +19,31 @@ namespace DataAccess.Services
         {
             _sociaDbContex = sociaDbContex;
         }
+        public async Task<List<User>> GetSuggestedFriendsAsync(string userId)
+        {
+           var existingFriendId = await _sociaDbContex.FriendShips
+                .Where(f => f.SenderId == userId || f.ReceiverId == userId)
+                .Select(f => f.SenderId == userId ? f.ReceiverId : f.SenderId)
+                .ToListAsync();
+
+            // peding requests
+            var pendingRequestId = await _sociaDbContex.FriendRequests
+                .Where(f => (f.SenderId == userId || f.ReceiverId == userId)  && f.Status ==
+                FriendShipStatus.Pending)
+                .Select(f => f.SenderId == userId ? f.ReceiverId : f.SenderId)
+                .ToListAsync();
+
+            //get suggested friends
+            var suggestedFriends = await _sociaDbContex.Users
+                .Where(u => u.Id != userId && 
+                !existingFriendId.Contains(u.Id) && 
+                !pendingRequestId.Contains(u.Id))
+                .Take(5)
+                .ToListAsync();
+
+            return suggestedFriends;
+
+        }
         public async Task UpdateRequestAsync(string requestId, string newStatus)
         {
             var requestdb = await _sociaDbContex.FriendRequests.FirstOrDefaultAsync(n => n.Id == requestId);
@@ -67,5 +92,7 @@ namespace DataAccess.Services
                 await _sociaDbContex.SaveChangesAsync();
             }
         }
+
+
     }
 }
