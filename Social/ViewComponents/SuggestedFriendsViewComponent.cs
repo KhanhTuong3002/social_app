@@ -1,6 +1,7 @@
 ﻿using BussinessObject.Entities;
 using DataAccess.Services;
 using Microsoft.AspNetCore.Mvc;
+using Social_App.ViewModel.Friends;
 using System.Security.Claims;
 namespace Social_App.ViewComponents
 {
@@ -16,7 +17,14 @@ namespace Social_App.ViewComponents
             var loggedInUserId = ((ClaimsPrincipal)User).FindFirstValue(ClaimTypes.NameIdentifier);
 
             var suggestedFriends = await _friendService.GetSuggestedFriendsAsync(loggedInUserId);
-            return View(suggestedFriends);
+            var suggestedVM = suggestedFriends.Select(n => new UserWithFirendCountVM()
+            {
+                UserId = n.user.Id,
+                FullName = n.user.FullName,
+                AvatarUrl = n.user.AvatarUrl,
+                FriendCount = n.FriendCount,
+            }).ToList();
+            return View(suggestedVM);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using BussinessObject.Entities;
+using DataAccess.Dtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace DataAccess.Services
 
         Task RemoveFriendAsync(string friendShipId);
 
-        Task<List<User>> GetSuggestedFriendsAsync(string userId);
+        Task<List<UserWithFirendCount>> GetSuggestedFriendsAsync(string userId);
 
     }
 }

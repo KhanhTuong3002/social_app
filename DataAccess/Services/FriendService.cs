@@ -1,5 +1,6 @@
 ﻿using BussinessObject;
 using BussinessObject.Entities;
+using DataAccess.Dtos;
 using DataAccess.Helpers.Constants;
 using DataAccess.Helpers.Enums;
 using Microsoft.AspNetCore.Http;
@@ -19,7 +20,7 @@ namespace DataAccess.Services
         {
             _sociaDbContex = sociaDbContex;
         }
-        public async Task<List<User>> GetSuggestedFriendsAsync(string userId)
+        public async Task<List<UserWithFirendCount>> GetSuggestedFriendsAsync(string userId)
         {
            var existingFriendId = await _sociaDbContex.FriendShips
                 .Where(f => f.SenderId == userId || f.ReceiverId == userId)
@@ -38,6 +39,12 @@ namespace DataAccess.Services
                 .Where(u => u.Id != userId && 
                 !existingFriendId.Contains(u.Id) && 
                 !pendingRequestId.Contains(u.Id))
+                .Select(u => new UserWithFirendCount()
+                {
+                    user = u,
+                    FriendCount = _sociaDbContex.FriendShips
+                        .Count(f => f.SenderId == u.Id || f.ReceiverId == u.Id)
+                })
                 .Take(5)
                 .ToListAsync();
 
