@@ -144,11 +144,14 @@ namespace Social.Controllers
             };
 
             await _postService.AddPostCommentAsync(newComment);
+
+            var post = await _postService.GetPostByIdAsync(commentVM.PostId);
             // redirect to the index page
-            return RedirectToAction("Index");
+            return PartialView("Home/_Post", post);
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddPostReport(PostReportVM postReportVM)
         {
             var loggedInUser = GetUserId();
@@ -162,19 +165,20 @@ namespace Social.Controllers
 
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> RemovePostComment(RemoveCommentPM commentVM)
         {
             await _postService.RemovePostCommentAsync(commentVM.CommentId);
-            return RedirectToAction("Index");
+            var post = await _postService.GetPostByIdAsync(commentVM.PostId);
+            return PartialView("Home/_Post", post);
         }
+
+
+
         public async Task<IActionResult> PostDelete (PostDeleteVM postDeleteVM)
         {
            var postRemoved = await _postService.RemovePostAsync(postDeleteVM.PostId);
             await _hashtagServices.ProcessHashtagsForRemovePostAsync(postDeleteVM.PostId, postRemoved.Content);
-
-
-            //update hashtags
-
 
             return RedirectToAction("Index");
         }

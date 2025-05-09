@@ -163,8 +163,10 @@
                             <p class="mt-0.5">
                                 @comment.Content
                             </p>
-                            <form asp-controller="Home" asp-action="RemovePostComment">
+                            <form asp-controller="Home" asp-action="RemovePostComment" class="remove-comments-form">
+                                @Html.AntiForgeryToken()
                                 <input type="hidden" name="commentId" value="@comment.CommentId" />
+                                <input type="hidden" name="postId" value="@comment.PostId" />
                                 <button type="submit" class="text-red-500 text-xs ml-2" title="Remove post comment">
                                     <ion-icon name="trash-outline"></ion-icon>
                                 </button>
@@ -185,7 +187,8 @@
             }
         </div>
 
-        <form asp-controller="Home" asp-action="AddPostComment">
+        <form asp-controller="Home" asp-action="AddPostComment" class="add-comment-form">
+            @Html.AntiForgeryToken()
             <div class="sm:px-4 sm:py-3 p-2.5 border-t border-gray-100 flex items-center gap-1">
                 <a asp-controller="Users" asp-action="Details" asp-route-userid="@Model.UserId">
                     <img src="@avatarPath" class="w-6 h-6 rounded-full" />
