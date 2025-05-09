@@ -1,4 +1,5 @@
-﻿using DataAccess.Services;
+﻿using DataAccess.Helpers.Constants;
+using DataAccess.Services;
 using Microsoft.AspNetCore.Mvc;
 using Social_App.Controllers.Base;
 using Social_App.ViewModel.Friends;
@@ -19,10 +20,12 @@ namespace Social_App.Controllers
 
             var friendsData = new FriendshipVM()
             {
-                FriendRequestSent = await _friendService.GetFriendRequestsAsync(userId)
+                FriendRequestSent = await _friendService.GetFriendRequestsAsync(userId),
+                FriendRequestReceived = await _friendService.GetReceivedFriendRequestsAsync(userId)
+
             };
 
-            return View();
+            return View(friendsData);
         }
         [HttpPost]
         public async Task<IActionResult> SendFriendRequest(string receiverId)
@@ -32,6 +35,12 @@ namespace Social_App.Controllers
 
             await _friendService.SendRequestAsync(userId, receiverId);
             return RedirectToAction("Index", "Home");
+        }
+        [HttpPost]
+        public async Task<IActionResult> CancelFriendRequest(string requestId)
+        {
+            await _friendService.UpdateRequestAsync(requestId,FriendShipStatus.Canceled);
+            return RedirectToAction("Index");
         }
     }
 }
