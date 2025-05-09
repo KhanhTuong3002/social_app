@@ -5,6 +5,7 @@ using Social_App.ViewModel.Stories;
 using DataAccess.Helpers.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Social_App.Controllers.Base;
+using Microsoft.Extensions.Hosting;
 
 namespace Social_App.Controllers
 {
@@ -27,6 +28,14 @@ namespace Social_App.Controllers
             if (loggedInUser == null) return RedirectToLogin();
 
             var imageUploadPath = await _fileServices.UploadFileAsync(storyVM.Image,ImageFileType.storyImage);
+
+            // Kiểm tra nếu cả content và image đều rỗng
+            if (storyVM.Image == null)
+            {
+                // Trả về thông báo lỗi hoặc redirect về trang trước đó
+                TempData["ErrorStories"] = "Oh....Failed! You must include an image to create a stories.";
+                return RedirectToAction("Index", "Home"); // hoặc trang bạn muốn
+            }
 
             var newStory = new Story()
             {

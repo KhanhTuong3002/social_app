@@ -1,3 +1,4 @@
+﻿using BussinessObject;
 using BussinessObject.Entities;
 using DataAccess.Helpers.Enums;
 using DataAccess.Services;
@@ -54,9 +55,18 @@ namespace Social.Controllers
 
             var imageUploadPath = await _fileServices.UploadFileAsync(post.image, ImageFileType.postImage);
 
+            // Kiểm tra nếu cả content và image đều rỗng
+            if (string.IsNullOrWhiteSpace(post.content) && post.image == null)
+            {
+                // Trả về thông báo lỗi hoặc redirect về trang trước đó
+                TempData["Error"] = "Oh....Failed! You must include either content or an image to create a post.";
+                return RedirectToAction("Index"); // hoặc trang bạn muốn
+            }
+
             //create a new post
             Post newPost = new Post()
             {
+                PostId = SnowflakeGenerator.Generate(),
                 Content = post.content,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow,
@@ -69,7 +79,10 @@ namespace Social.Controllers
             await _postService.CreatePostAsync(newPost);
 
             //find the hashtags in the post content
-            await _hashtagServices.ProcessHashtagsForNewPostAsync(post.postId, post.content, post.UserId);
+            if (!string.IsNullOrWhiteSpace(post.content))
+            {
+                await _hashtagServices.ProcessHashtagsForNewPostAsync(newPost.PostId, post.content, newPost.UserId);
+            }
             // redirect to the index page
             return RedirectToAction("Index");
         }
@@ -84,7 +97,7 @@ namespace Social.Controllers
 
             var post = await _postService.GetPostByIdAsync(postLikeVM.PostId);
 
-            return PartialView("Home/_Post", post);
+            return PartialView("Home/_Post",post);
 
         }
 
@@ -96,7 +109,10 @@ namespace Social.Controllers
             if (loggedInUser == null) return RedirectToLogin();
 
             await _postService.TogglePostFavoriteAsync(postFavoriteVM.PostId, loggedInUser);
-            return RedirectToAction("Index");
+
+            var post = await _postService.GetPostByIdAsync(postFavoriteVM.PostId);
+
+            return PartialView("Home/_Post", post);
 
         }
 

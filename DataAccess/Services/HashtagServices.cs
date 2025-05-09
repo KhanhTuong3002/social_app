@@ -53,7 +53,7 @@ namespace DataAccess.Services
 
         public async Task ProcessHashtagsForRemovePostAsync(string postId, string content)
         {
-
+            if (string.IsNullOrWhiteSpace(content)) return;
             var hashtags = HashtagHelper.GetHashtags(content);
             foreach (var hashtag in hashtags)
             {

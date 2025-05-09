@@ -5,6 +5,13 @@
         <div class="max-w-[680px] mx-auto">
             @await Component.InvokeAsync("Stories")
 
+            @if (TempData["ErrorStories"] != null)
+            {
+                <div class="text-red-500 p-4 rounded-md">
+                    @TempData["ErrorStories"]
+                </div>
+            }
+
             <div class="md:max-w-[580px] mx-auto flex-1 xl:space-y-6 space-y-3">
                 <div class="bg-white rounded-xl shadow-sm md:p-4 p-2 space-y-4 text-sm font-medium border1">
                     <div class="flex items-center md:gap-3 gap-1">
@@ -24,6 +31,13 @@
                 </div>
 
                 <div id="post-container" class="space-y-4">
+                   
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="text-red-500 p-4 rounded-md">
+                            @TempData["Error"]
+                        </div>
+                    }
 
                     @if (Model.Count == 0)
                     {
@@ -72,10 +86,12 @@
 
     document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('post-container').addEventListener('click', function (event) {
-            if (event.target.closest('.like-button')) {
+
+            const button = event.target.closest('.like-button,.favorite-button');
+
+            if (button) {
                 event.preventDefault();
 
-                var button = event.target.closest('.like-button');
                 var form = button.closest('form');
                 var postId = form.querySelector('input[name="postId"]').value;
                 var postContainer = document.getElementById('post-' + postId);
