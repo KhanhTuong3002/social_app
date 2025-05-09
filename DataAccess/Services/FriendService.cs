@@ -89,6 +89,17 @@ namespace DataAccess.Services
             {
                 _sociaDbContex.FriendShips.Remove(friendShip);
                 await _sociaDbContex.SaveChangesAsync();
+
+                //find and remove the corresponding friend request
+                var request = await _sociaDbContex.FriendRequests
+                    .Where(f => (f.SenderId == friendShip.SenderId && f.ReceiverId == friendShip.ReceiverId) ||
+                                       (f.SenderId == friendShip.ReceiverId && f.ReceiverId == friendShip.SenderId))
+                    .ToListAsync();
+                if (request.Any())
+                {
+                    _sociaDbContex.FriendRequests.RemoveRange(request);
+                    await _sociaDbContex.SaveChangesAsync();
+                }
             }
         }
 
