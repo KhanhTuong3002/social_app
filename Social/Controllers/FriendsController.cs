@@ -50,5 +50,12 @@ namespace Social_App.Controllers
             await _friendService.UpdateRequestAsync(requestId, FriendShipStatus.Accepted);
             return RedirectToAction("Index");
         }
+
+        [HttpPost]
+        public async Task<IActionResult> RejectFriendRequest(string requestId)
+        {
+            await _friendService.UpdateRequestAsync(requestId, FriendShipStatus.Rejected);
+            return RedirectToAction("Index");
+        }
     }
 }
