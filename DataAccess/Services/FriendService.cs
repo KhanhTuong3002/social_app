@@ -113,5 +113,15 @@ namespace DataAccess.Services
 
             return friendRequestsSent;
         }
+
+        public async Task<List<FriendShip>> GetFriendsAsync(string userId)
+        {
+            var friend = await _sociaDbContex.FriendShips
+                .Include(n => n.Sender)
+                .Include(n => n.Receiver)
+                .Where(f => f.SenderId == userId || f.ReceiverId == userId)
+                .ToListAsync();
+            return friend;
+        }
     }
 }

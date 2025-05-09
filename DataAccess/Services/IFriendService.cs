@@ -19,6 +19,7 @@ namespace DataAccess.Services
         Task<List<UserWithFirendCount>> GetSuggestedFriendsAsync(string userId);
         Task<List<FriendRequest>> GetFriendRequestsAsync(string userId);
         Task<List<FriendRequest>> GetReceivedFriendRequestsAsync(string userId);
+        Task<List<FriendShip>> GetFriendsAsync(string userId);
 
     }
 }

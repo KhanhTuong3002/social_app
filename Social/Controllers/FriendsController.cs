@@ -20,6 +20,7 @@ namespace Social_App.Controllers
 
             var friendsData = new FriendshipVM()
             {
+                Friends = await _friendService.GetFriendsAsync(userId),
                 FriendRequestSent = await _friendService.GetFriendRequestsAsync(userId),
                 FriendRequestReceived = await _friendService.GetReceivedFriendRequestsAsync(userId)
 
@@ -40,6 +41,13 @@ namespace Social_App.Controllers
         public async Task<IActionResult> CancelFriendRequest(string requestId)
         {
             await _friendService.UpdateRequestAsync(requestId,FriendShipStatus.Canceled);
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AcceptFriendRequest(string requestId)
+        {
+            await _friendService.UpdateRequestAsync(requestId, FriendShipStatus.Accepted);
             return RedirectToAction("Index");
         }
     }

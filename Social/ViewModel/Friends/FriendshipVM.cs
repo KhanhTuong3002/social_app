@@ -7,5 +7,6 @@ namespace Social_App.ViewModel.Friends
     {
         public List<FriendRequest> FriendRequestSent  = new List<FriendRequest>();
         public List<FriendRequest> FriendRequestReceived = new List<FriendRequest>();
+        public List<FriendShip> Friends = new List<FriendShip>();
     }
 }
