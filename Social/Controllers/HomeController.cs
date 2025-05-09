@@ -73,15 +73,18 @@ namespace Social.Controllers
             // redirect to the index page
             return RedirectToAction("Index");
         }
-        [HttpPost]
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> TogglePostLike(PostLikeVM postLikeVM)
         {
             var loggedInUser = GetUserId();
             if (loggedInUser == null) return RedirectToLogin();
             await _postService.TogglePostLikeAsync(postLikeVM.PostId, loggedInUser);
 
-            return RedirectToAction("Index");
+            var post = await _postService.GetPostByIdAsync(postLikeVM.PostId);
+
+            return PartialView("Home/_Post", post);
 
         }
 

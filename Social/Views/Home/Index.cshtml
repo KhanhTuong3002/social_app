@@ -23,20 +23,25 @@
                     </div>
                 </div>
 
-                @if (Model.Count == 0)
-                {
-                    <div class="bg-white rounded-xl shadow-sm md:p-4 p-2 space-y-4 text-sm font-medium border1" style="width: 580px;">
-                        Currently, there are no posts available. Would you like to create the first one?
-                    </div>
-                }
-                else
-                {
-                    @foreach (var post in Model)
+                <div id="post-container" class="space-y-4">
+
+                    @if (Model.Count == 0)
                     {
-                        <partial name="Home/_Post" model="post" view-data='new ViewDataDictionary(ViewData)
-                                 {{"showAllComment",false}}' />
+                        <div class="bg-white rounded-xl shadow-sm md:p-4 p-2 space-y-4 text-sm font-medium border1" style="width: 580px;">
+                            Currently, there are no posts available. Would you like to create the first one?
+                        </div>
                     }
-                }
+                    else
+                    {
+                        @foreach (var post in Model)
+                        {
+                            <partial name="Home/_Post" model="post" view-data='new ViewDataDictionary(ViewData)
+                                     {{"showAllComment",false}}' />
+                        }
+                    }
+
+                </div>
+
             </div>
         </div>
         <div class="flex-1">
@@ -64,4 +69,33 @@
         document.getElementById("deleteConfirmationPostId").value = postId; // Ensure the element with ID "postId" exists
         UIkit.modal("#postDeleteDialog").show(); // Ensure the modal with ID "postDeleteDialog" exists
     }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('post-container').addEventListener('click', function (event) {
+            if (event.target.closest('.like-button')) {
+                event.preventDefault();
+
+                var button = event.target.closest('.like-button');
+                var form = button.closest('form');
+                var postId = form.querySelector('input[name="postId"]').value;
+                var postContainer = document.getElementById('post-' + postId);
+
+                fetch(form.action, {
+                    method: 'POST',
+                    body: new FormData(form),
+                    headers: {}
+                })
+                    .then(response => response.text())
+                    .then(html => {
+                        postContainer.innerHTML = html;
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            }
+        });
+    });
+
+       
+       
 </script>
