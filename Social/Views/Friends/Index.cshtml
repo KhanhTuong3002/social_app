@@ -35,7 +35,7 @@
 
                         <form asp-controller="Friends" asp-action="RemoveFriend" method="post">
                             <input type="hidden" name="friendshipId" value="@_friendShip.Id" />
-                            <button type="submit" class="button bg-red-soft text-red gap-1 max-md:hidden">
+                            <button type="submit" class="button bg-red-100 text-red-600 gap-1 max-md:hidden">
                                 <ion-icon name="remove-circle-outline" class="text-xl -ml-1"></ion-icon> Remove
                             </button>
                         </form>                     
@@ -76,14 +76,14 @@
                         <form asp-controller="Friends" asp-action="UpdateFriendRequest" method="post">
                             <input type="hidden" name="requestId" value="@request.Id" />
                             <input type="hidden" name="status" value="@FriendShipStatus.Rejected" />
-                            <button type="submit" class="button bg-red-soft text-red gap-1 max-md:hidden">
+                            <button type="submit" class="button bg-red-100 text-red-600 gap-1 max-md:hidden">
                                 <ion-icon name="remove-circle-outline" class="text-xl -ml-1"></ion-icon> Reject
                             </button>
                         </form>
                         <form asp-controller="Friends" asp-action="UpdateFriendRequest" method="post">
                             <input type="hidden" name="requestId" value="@request.Id" />
                             <input type="hidden" name="status" value="@FriendShipStatus.Accepted" />
-                            <button type="submit" class="button bo-primary-soft text-primary gap-1 max-md:hidden">
+                            <button type="submit" class="button bg-primary-soft text-primary gap-1 max-md:hidden">
                                 <ion-icon name="checkbox-outline" class="text-xl -ml-1"></ion-icon> Accept
                             </button>
                         </form>
@@ -120,7 +120,7 @@
                         <form asp-controller="Friends" asp-action="UpdateFriendRequest" method="post">
                             <input type="hidden" name="requestId" value="@request.Id" />
                             <input type="hidden" name="status" value="@FriendShipStatus.Canceled" />
-                            <button type="submit" class="button text-primary gap-1 max-md:hidden">
+                            <button type="submit" class="button text-red-600 gap-1 max-md:hidden">
                                 <ion-icon name="remove-circle-outline" class="text-xl -ml-1"></ion-icon> Cancel
                             </button>
                         </form>
