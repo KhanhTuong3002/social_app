@@ -59,6 +59,13 @@ namespace Social_App.Controllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> UpdateFriendRequest(string requestId,string status)
+        {
+            await _friendService.UpdateRequestAsync(requestId, status);
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
         public async Task<IActionResult> RemoveFriend (string friendshipId)
         {
             await _friendService.RemoveFriendAsync(friendshipId);
