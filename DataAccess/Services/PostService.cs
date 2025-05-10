@@ -12,9 +12,11 @@ namespace DataAccess.Services
     public class PostService : IPostService
     {
         private readonly SociaDbContex _context;
-        public PostService(SociaDbContex context)
+        private readonly INotificationService _notificationService;
+        public PostService(SociaDbContex context , INotificationService notificationService)
         {
             _context = context;
+            _notificationService = notificationService;
         }
 
         public async Task<List<Post>> GetAllPostsAsync(string loggedInUser)
@@ -158,6 +160,9 @@ namespace DataAccess.Services
                 };
                 await _context.Likes.AddAsync(newLike);
                 await _context.SaveChangesAsync();
+
+                // Add notification todb
+                await _notificationService.AddNewNotificationAsync(userId,"Some one like your post", "Like");
             }
         }
 
