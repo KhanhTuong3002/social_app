@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Social_App.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,6 +46,8 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.CallbackPath = "/signin-github";
 });
 builder.Services.AddAuthorization();
+
+builder.Services.AddSignalR();
 
 
 //Services Configuration
@@ -93,5 +96,7 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapHub<NotificationHub>("/notificationHub");
 
 app.Run();
