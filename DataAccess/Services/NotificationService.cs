@@ -1,4 +1,5 @@
 ﻿using BussinessObject.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +29,15 @@ namespace DataAccess.Services
             };
             await _sociaDbContex.Notifications.AddAsync(newNotification);
             await _sociaDbContex.SaveChangesAsync();
+        }
+
+        public async Task<int> GetUnreadNotificationCountAsync(string userId)
+        {
+           var count = await _sociaDbContex.Notifications
+                .Where(n => n.UserId == userId && !n.IsRead)
+               .CountAsync();
+
+            return count;
         }
     }
 }

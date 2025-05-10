@@ -4,7 +4,9 @@ using DataAccess.Helpers.Enums;
 using DataAccess.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Social_App.Controllers.Base;
+using Social_App.Hubs;
 using Social_App.ViewModel.Home;
 using System.Security.Claims;
 
@@ -18,16 +20,19 @@ namespace Social.Controllers
         public readonly IPostService _postService;
         private readonly IHashtagServices _hashtagServices;
         private readonly IFileServices _fileServices;
+        private readonly IHubContext<NotificationHub> _hubContext;
 
 
         public HomeController(ILogger<HomeController> logger, 
-            IPostService postService, IHashtagServices hashtagServices, IFileServices fileServices)
+            IPostService postService, IHashtagServices hashtagServices, IFileServices fileServices,
+            IHubContext<NotificationHub> hubContext) 
         {
             _logger = logger;
             //_context = context;
             _postService = postService;
             _hashtagServices = hashtagServices;
             _fileServices = fileServices;
+            _hubContext = hubContext;
         }
 
         public async Task<IActionResult> Index()
@@ -96,6 +101,10 @@ namespace Social.Controllers
             await _postService.TogglePostLikeAsync(postLikeVM.PostId, loggedInUser);
 
             var post = await _postService.GetPostByIdAsync(postLikeVM.PostId);
+
+            await _hubContext.Clients.User(post.UserId)
+                .SendAsync("ReceiveNotification","new");
+
 
             return PartialView("Home/_Post",post);
 

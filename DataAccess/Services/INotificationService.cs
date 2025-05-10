@@ -9,5 +9,6 @@ namespace DataAccess.Services
     public interface INotificationService
     {
         Task AddNewNotificationAsync(string userId, string message, string type);
+        Task<int> GetUnreadNotificationCountAsync(string userId);
     }
 }
