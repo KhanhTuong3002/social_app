@@ -1,4 +1,6 @@
 ﻿using BussinessObject.Entities;
+using DataAccess.Hubs;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -11,10 +13,11 @@ namespace DataAccess.Services
     public class NotificationService : INotificationService
     {
         private readonly SociaDbContex _sociaDbContex;
-
-        public NotificationService(SociaDbContex sociaDbContex)
+        private readonly IHubContext<NotificationHub> _hubContext;
+        public NotificationService(SociaDbContex sociaDbContex, IHubContext<NotificationHub> hubContext)
         {
             _sociaDbContex = sociaDbContex;
+            _hubContext = hubContext;
         }
         public async Task AddNewNotificationAsync(string userId, string message, string type)
         {
@@ -29,6 +32,11 @@ namespace DataAccess.Services
             };
             await _sociaDbContex.Notifications.AddAsync(newNotification);
             await _sociaDbContex.SaveChangesAsync();
+
+            var notificationNumber = await GetUnreadNotificationCountAsync(userId);
+
+            await _hubContext.Clients.User(userId)
+                .SendAsync("ReceiveNotification", notificationNumber);
         }
 
         public async Task<int> GetUnreadNotificationCountAsync(string userId)

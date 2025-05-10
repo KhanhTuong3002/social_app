@@ -1,4 +1,5 @@
 ﻿using BussinessObject.Entities;
+using DataAccess.Dtos;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -18,7 +19,7 @@ namespace DataAccess.Services
         Task<Post> RemovePostAsync(string postId);
         Task AddPostCommentAsync(Comment comment);
         Task RemovePostCommentAsync(string commentId);
-        Task TogglePostLikeAsync(string postId, string userId);
+        Task<GetNotificationDto> TogglePostLikeAsync(string postId, string userId);
         Task TogglePostFavoriteAsync(string postId, string userId);
         Task TogglePostVisibilityAsync(string postId, string userId);
         Task ReportPostAsync(string postId, string userId);

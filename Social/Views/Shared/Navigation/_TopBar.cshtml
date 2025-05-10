@@ -128,7 +128,7 @@
 
         connection.on("ReceiveNotification", (message) => {
             console.log("message ==>", message);
-            document.getElementById("notificationsCount").innerHTML = "new"; // hoặc tăng số đếm
+            document.getElementById("notificationsCount").innerHTML = message; 
         });
 
         connection.start()

@@ -1,4 +1,5 @@
 ﻿using BussinessObject.Entities;
+using DataAccess.Dtos;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -139,8 +140,13 @@ namespace DataAccess.Services
             }
         }
 
-        public async Task TogglePostLikeAsync(string postId, string userId)
+        public async Task<GetNotificationDto> TogglePostLikeAsync(string postId, string userId)
         {
+            var response = new GetNotificationDto()
+            {
+                Success = false,
+                SendNotification = false,
+            };
             //check if user liked the post
             var like = await _context.Likes.
                 Where(l => l.PostId == postId && l.UserId == userId).FirstOrDefaultAsync();
@@ -161,9 +167,10 @@ namespace DataAccess.Services
                 await _context.Likes.AddAsync(newLike);
                 await _context.SaveChangesAsync();
 
-                // Add notification todb
-                await _notificationService.AddNewNotificationAsync(userId,"Some one like your post", "Like");
+                response.SendNotification = true;
             }
+            response.Success = true;
+            return response;
         }
 
         public async Task TogglePostVisibilityAsync(string postId, string userId)

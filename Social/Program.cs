@@ -1,13 +1,13 @@
 using BussinessObject.Entities;
 using DataAccess;
 using DataAccess.Helpers;
+using DataAccess.Hubs;
 using DataAccess.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using Social_App.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
