@@ -41,6 +41,17 @@ namespace DataAccess.Services
                 .SendAsync("ReceiveNotification", notificationNumber);
         }
 
+        public async Task<List<Notification>> GetNotifications(string userId)
+        {
+          var allNotifications = await _sociaDbContex.Notifications
+                .Where(n => n.UserId == userId)
+                .OrderBy(n => n.IsRead)
+                .ThenByDescending(n => n.CreatedAt)
+                .ToListAsync();
+
+            return allNotifications;
+        }
+
         public async Task<int> GetUnreadNotificationCountAsync(string userId)
         {
            var count = await _sociaDbContex.Notifications

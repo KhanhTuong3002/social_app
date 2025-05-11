@@ -30,5 +30,14 @@ namespace Social_App.Controllers
 
 
         }
+
+        public async Task<IActionResult> GetNotifications()
+        {
+            var userId = GetUserId();
+            if (!userId.IsNullOrEmpty()) RedirectToLogin();
+
+            var notifications = await _notificationService.GetNotifications(userId);
+            return PartialView("Notifications/_Notifications",notifications);
+        }
     }
 }

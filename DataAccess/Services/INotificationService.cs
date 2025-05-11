@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BussinessObject.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,5 +11,6 @@ namespace DataAccess.Services
     {
         Task AddNewNotificationAsync(string userId, string type , string userfullname, string? postId );
         Task<int> GetUnreadNotificationCountAsync(string userId);
+        Task<List<Notification>> GetNotifications(string userId);
     }
 }
