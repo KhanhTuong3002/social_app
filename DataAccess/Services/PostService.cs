@@ -115,8 +115,13 @@ namespace DataAccess.Services
 
         }
 
-        public async Task TogglePostFavoriteAsync(string postId, string userId)
+        public async Task<GetNotificationDto> TogglePostFavoriteAsync(string postId, string userId)
         {
+            var response = new GetNotificationDto()
+            {
+                Success = true,
+                SendNotification = false,
+            };
 
             //check if user favorite the post
             var favorite = await _context.Favorites.
@@ -137,14 +142,17 @@ namespace DataAccess.Services
                 };
                 await _context.Favorites.AddAsync(newFavorite);
                 await _context.SaveChangesAsync();
+
+                response.SendNotification = true;
             }
+            return response;
         }
 
         public async Task<GetNotificationDto> TogglePostLikeAsync(string postId, string userId)
         {
             var response = new GetNotificationDto()
             {
-                Success = false,
+                Success = true,
                 SendNotification = false,
             };
             //check if user liked the post
@@ -169,7 +177,6 @@ namespace DataAccess.Services
 
                 response.SendNotification = true;
             }
-            response.Success = true;
             return response;
         }
 

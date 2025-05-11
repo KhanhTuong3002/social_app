@@ -1,5 +1,6 @@
 ﻿using BussinessObject;
 using BussinessObject.Entities;
+using DataAccess.Helpers.Constants;
 using DataAccess.Helpers.Enums;
 using DataAccess.Hubs;
 using DataAccess.Services;
@@ -97,14 +98,15 @@ namespace Social.Controllers
         public async Task<IActionResult> TogglePostLike(PostLikeVM postLikeVM)
         {
             var loggedInUser = GetUserId();
+            var UserName = GetUserFullName();
             if (loggedInUser == null) return RedirectToLogin();
 
-          var result =  await _postService.TogglePostLikeAsync(postLikeVM.PostId, loggedInUser);
-            if(result.SendNotification)
-                await _notificationService.AddNewNotificationAsync(loggedInUser, "Liked" ,"Like");
+          var result =  await _postService.TogglePostLikeAsync(postLikeVM.PostId, loggedInUser);          
+          var post = await _postService.GetPostByIdAsync(postLikeVM.PostId);
 
-            var post = await _postService.GetPostByIdAsync(postLikeVM.PostId);
-
+            if (result.SendNotification)
+                await _notificationService.AddNewNotificationAsync
+                    (post.UserId,NotificationType.Like , UserName, postLikeVM.PostId);
 
             return PartialView("Home/_Post",post);
 
@@ -116,11 +118,16 @@ namespace Social.Controllers
         public async Task<IActionResult> TogglePostFavorite(PostFavoriteVM postFavoriteVM)
         {
             var loggedInUser = GetUserId();
+            var UserName = GetUserFullName();
             if (loggedInUser == null) return RedirectToLogin();
 
-            await _postService.TogglePostFavoriteAsync(postFavoriteVM.PostId, loggedInUser);
+           var result = await _postService.TogglePostFavoriteAsync(postFavoriteVM.PostId, loggedInUser);
 
             var post = await _postService.GetPostByIdAsync(postFavoriteVM.PostId);
+
+            if (result.SendNotification)
+                await _notificationService.AddNewNotificationAsync
+                    (post.UserId, NotificationType.Favorite, UserName, postFavoriteVM.PostId);
 
             return PartialView("Home/_Post", post);
 
@@ -142,6 +149,7 @@ namespace Social.Controllers
         public async Task<IActionResult> AddPostComment(PostCommentPM commentVM)
         {
             var loggedInUser = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var UserName = GetUserFullName();
 
             //create a new comment
             var newComment = new Comment()
@@ -156,6 +164,10 @@ namespace Social.Controllers
             await _postService.AddPostCommentAsync(newComment);
 
             var post = await _postService.GetPostByIdAsync(commentVM.PostId);
+
+           
+                await _notificationService.AddNewNotificationAsync
+                    (post.UserId, NotificationType.Comment, UserName, commentVM.PostId);
             // redirect to the index page
             return PartialView("Home/_Post", post);
         }

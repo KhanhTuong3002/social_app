@@ -20,7 +20,7 @@ namespace DataAccess.Services
         Task AddPostCommentAsync(Comment comment);
         Task RemovePostCommentAsync(string commentId);
         Task<GetNotificationDto> TogglePostLikeAsync(string postId, string userId);
-        Task TogglePostFavoriteAsync(string postId, string userId);
+        Task<GetNotificationDto> TogglePostFavoriteAsync(string postId, string userId);
         Task TogglePostVisibilityAsync(string postId, string userId);
         Task ReportPostAsync(string postId, string userId);
     }

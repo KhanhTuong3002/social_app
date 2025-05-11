@@ -1,4 +1,5 @@
 ﻿using BussinessObject.Entities;
+using DataAccess.Helpers.Constants;
 using DataAccess.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
@@ -19,14 +20,15 @@ namespace DataAccess.Services
             _sociaDbContex = sociaDbContex;
             _hubContext = hubContext;
         }
-        public async Task AddNewNotificationAsync(string userId, string message, string type)
+        public async Task AddNewNotificationAsync(string userId, string type, string userfullname, string? postId)
         {
             var newNotification = new Notification()
             {
                 UserId = userId,
-                Message = message,
+                Message = GetPostMessage(type, userfullname),
                 IsRead = false,
                 Type = type,
+                PostId = postId,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
             };
@@ -46,6 +48,34 @@ namespace DataAccess.Services
                .CountAsync();
 
             return count;
+        }
+
+        private string GetPostMessage(string type, string userfullname)
+        {
+            var message = "";
+            switch (type)
+            {
+                case NotificationType.Like:
+                    message = $"{userfullname} liked your post";
+                    break;
+                case NotificationType.Comment:
+                    message = $"{userfullname} commented on your post";
+                    break;
+                case NotificationType.Favorite:
+                    
+                    message = $"{userfullname} favorited your post";
+                    break;
+                case NotificationType.FriendRequest:
+                    message = $"{userfullname} sent you a friend request";
+                    break;
+                case NotificationType.FriendRequestAprroved:
+                    message = $"{userfullname} accepted your friend request";
+                    break;
+                default:
+                    message = "";
+                    break;
+            }
+            return message;
         }
     }
 }

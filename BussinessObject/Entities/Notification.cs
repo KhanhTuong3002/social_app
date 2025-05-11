@@ -20,6 +20,8 @@ namespace BussinessObject.Entities
         public string Message { get; set; }
         public bool IsRead { get; set; }
 
+        public string? PostId { get; set; } = null!;
+
         public string Type { get; set; } 
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
