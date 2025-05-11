@@ -61,6 +61,20 @@ namespace DataAccess.Services
             return count;
         }
 
+        public async Task SetNotificationAsReadÁync(string notificationId)
+        {
+            var notificationDb = await _sociaDbContex.Notifications.FirstOrDefaultAsync(n => n.Id == notificationId);
+
+            if (notificationDb != null)
+            {
+                notificationDb.UpdatedAt = DateTime.UtcNow;
+                notificationDb.IsRead = true;
+
+                _sociaDbContex.Notifications.Update(notificationDb);
+                await _sociaDbContex.SaveChangesAsync();
+            }
+        }
+
         private string GetPostMessage(string type, string userfullname)
         {
             var message = "";

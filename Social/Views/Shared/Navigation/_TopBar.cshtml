@@ -129,6 +129,8 @@
                 })
         })
 
+        
+
         // SignalR connection
         const connection = new signalR.HubConnectionBuilder()
             .withUrl("/notificationHub")
@@ -147,5 +149,20 @@
                 console.error("Error establishing SignalR connection: ", err);
             });
     });
+
+    function setNotificationAsRead(notificationId) {
+        console.log('Mark as read => notification => ', notificationId);
+
+        fetch(`Notifications/SetNotificationAsRead?notificationId=${notificationId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(resp => resp.text())
+            .then(html => {
+                document.getElementById('notification-dropdown').innerHTML = html;
+            })
+    }
 </script>
 

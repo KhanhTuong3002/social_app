@@ -12,5 +12,7 @@ namespace DataAccess.Services
         Task AddNewNotificationAsync(string userId, string type , string userfullname, string? postId );
         Task<int> GetUnreadNotificationCountAsync(string userId);
         Task<List<Notification>> GetNotifications(string userId);
+
+        Task SetNotificationAsReadÁync(string notificationId);
     }
 }

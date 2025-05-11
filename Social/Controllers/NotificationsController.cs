@@ -39,5 +39,18 @@ namespace Social_App.Controllers
             var notifications = await _notificationService.GetNotifications(userId);
             return PartialView("Notifications/_Notifications",notifications);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> SetNotificationAsRead(string notificationId)
+        {
+            var userId = GetUserId();
+            if (userId.IsNullOrEmpty()) RedirectToLogin();
+
+            await _notificationService.SetNotificationAsReadÁync(notificationId);
+
+            var notifications = await _notificationService.GetNotifications(userId);
+
+            return PartialView("Notifications/_Notifications", notifications);
+        }
     }
 }
