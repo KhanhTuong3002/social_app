@@ -109,7 +109,7 @@ namespace Social.Controllers
                 await _notificationService.AddNewNotificationAsync
                     (post.UserId,NotificationType.Like , UserName, postLikeVM.PostId);
 
-            return PartialView("Home/_Post",post);
+            return PartialView("Home/_Post",post); // mất layout trên details/favorite 
 
 
         }
@@ -130,7 +130,7 @@ namespace Social.Controllers
                 await _notificationService.AddNewNotificationAsync
                     (post.UserId, NotificationType.Favorite, UserName, postFavoriteVM.PostId);
 
-            return PartialView("Home/_Post", post);
+            return PartialView("Home/_Post", post); // mất layout trên details/favorite 
 
         }
 
@@ -170,7 +170,7 @@ namespace Social.Controllers
                 await _notificationService.AddNewNotificationAsync
                     (post.UserId, NotificationType.Comment, UserName, commentVM.PostId);
             // redirect to the index page
-            return PartialView("Home/_Post", post);
+            return PartialView("Home/_Post", post); // mất layout trên details/favorite 
         }
 
         [HttpPost]
@@ -193,7 +193,7 @@ namespace Social.Controllers
         {
             await _postService.RemovePostCommentAsync(commentVM.CommentId);
             var post = await _postService.GetPostByIdAsync(commentVM.PostId);
-            return PartialView("Home/_Post", post);
+            return PartialView("Home/_Post", post); // mất layout trên details/favorite 
         }
 
 
