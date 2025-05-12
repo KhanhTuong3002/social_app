@@ -108,10 +108,17 @@ namespace Social.Controllers
             if (result.SendNotification && loggedInUser != post.UserId)
                 await _notificationService.AddNewNotificationAsync
                     (post.UserId,NotificationType.Like , UserName, postLikeVM.PostId);
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                // Là request Ajax => trả về partial
+                return PartialView("Home/_Post", post);
 
-            return PartialView("Home/_Post",post); // mất layout trên details/favorite 
-
-
+            }
+            else
+            {
+                // Là request bình thường => redirect về trang đầy đủ
+                return RedirectToAction("Details", new { postId = postLikeVM.PostId });
+            }
         }
 
         [HttpPost]
@@ -130,7 +137,17 @@ namespace Social.Controllers
                 await _notificationService.AddNewNotificationAsync
                     (post.UserId, NotificationType.Favorite, UserName, postFavoriteVM.PostId);
 
-            return PartialView("Home/_Post", post); // mất layout trên details/favorite 
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                // Là request Ajax => trả về partial
+                return PartialView("Home/_Post", post);
+
+            }
+            else
+            {
+                // Là request bình thường => redirect về trang đầy đủ
+                return RedirectToAction("Details", new { postId = postFavoriteVM.PostId });
+            }
 
         }
 
@@ -169,8 +186,17 @@ namespace Social.Controllers
             if (loggedInUser != post.UserId)
                 await _notificationService.AddNewNotificationAsync
                     (post.UserId, NotificationType.Comment, UserName, commentVM.PostId);
-            // redirect to the index page
-            return PartialView("Home/_Post", post); // mất layout trên details/favorite 
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                // Là request Ajax => trả về partial
+                return PartialView("Home/_Post", post);
+
+            }
+            else
+            {
+                // Là request bình thường => redirect về trang đầy đủ
+                return RedirectToAction("Details", new { postId = commentVM.PostId });
+            }
         }
 
         [HttpPost]
@@ -193,12 +219,21 @@ namespace Social.Controllers
         {
             await _postService.RemovePostCommentAsync(commentVM.CommentId);
             var post = await _postService.GetPostByIdAsync(commentVM.PostId);
-            return PartialView("Home/_Post", post); // mất layout trên details/favorite 
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                // Là request Ajax => trả về partial
+                return PartialView("Home/_Post", post);
+
+            }
+            else
+            {
+                // Là request bình thường => redirect về trang đầy đủ
+                return RedirectToAction("Details", new { postId = commentVM.PostId });
+            }
+
         }
 
-
-
-        public async Task<IActionResult> PostDelete (PostDeleteVM postDeleteVM)
+            public async Task<IActionResult> PostDelete (PostDeleteVM postDeleteVM)
         {
            var postRemoved = await _postService.RemovePostAsync(postDeleteVM.PostId);
             await _hashtagServices.ProcessHashtagsForRemovePostAsync(postDeleteVM.PostId, postRemoved.Content);
