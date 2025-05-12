@@ -17,20 +17,24 @@
             <div class="grid grid-cols-2 gap-2">
                 @foreach (var _friendShip in Model.Friends)
                 {
-                    var friend = _friendShip.Sender.Id == User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                    var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                    var friend = _friendShip.Sender.Id == currentUserId
                     ? _friendShip.Receiver
                     : _friendShip.Sender;
 
                     <div class="flex md:items-center space-x-4 p-4 rounded-md box">
 
                         <div class="w-14 h-14 flex-shrink-0 rounded-lg relative">
-                            <img src="@(string.IsNullOrEmpty(_friendShip.Sender.AvatarUrl) ? Url.Content("~/images/avatar/user.png") :
-                            Url.Content(_friendShip.Sender.AvatarUrl))"
+                            <img src="@(string.IsNullOrEmpty(friend.AvatarUrl) ? Url.Content("~/images/avatar/user.png") :
+                             Url.Content(friend.AvatarUrl))"
                                  class="absolute w-full h-full inset-0 rounded-md object-cover shadow-sm" />
                         </div>
 
                         <div class="flex-1">
-                            <a asp-controller="Users" asp-action="Details" asp-route-userId="@_friendShip.Sender.Id" class="text-base font-semibold capitalize text-black">@_friendShip.Sender.FullName</a>
+                            <a asp-controller="Users" asp-action="Details" asp-route-userId="@friend.Id"
+                               class="text-base font-semibold capitalize text-black">
+                                @friend.FullName
+                            </a>
                         </div>
 
                         <form asp-controller="Friends" asp-action="RemoveFriend" method="post">
@@ -38,7 +42,7 @@
                             <button type="submit" class="button bg-red-100 text-red-600 gap-1 max-md:hidden">
                                 <ion-icon name="remove-circle-outline" class="text-xl -ml-1"></ion-icon> Remove
                             </button>
-                        </form>                     
+                        </form>
                     </div>
                 }
             </div>

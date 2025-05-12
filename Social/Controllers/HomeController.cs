@@ -36,6 +36,7 @@ namespace Social.Controllers
             _notificationService = notificationService;
         }
 
+
         public async Task<IActionResult> Index()
         {
             var loggedInUser = GetUserId();
@@ -47,7 +48,7 @@ namespace Social.Controllers
         public async Task<IActionResult> Details(string postId)
         {
             var post = await _postService.GetPostByIdAsync(postId);
-            return View(post); // It will look for Views/Home/Details.cshtml
+            return View(post); 
         }
 
 
@@ -104,7 +105,7 @@ namespace Social.Controllers
           var result =  await _postService.TogglePostLikeAsync(postLikeVM.PostId, loggedInUser);          
           var post = await _postService.GetPostByIdAsync(postLikeVM.PostId);
 
-            if (result.SendNotification)
+            if (result.SendNotification && loggedInUser != post.UserId)
                 await _notificationService.AddNewNotificationAsync
                     (post.UserId,NotificationType.Like , UserName, postLikeVM.PostId);
 
@@ -125,7 +126,7 @@ namespace Social.Controllers
 
             var post = await _postService.GetPostByIdAsync(postFavoriteVM.PostId);
 
-            if (result.SendNotification)
+            if (result.SendNotification && loggedInUser != post.UserId)
                 await _notificationService.AddNewNotificationAsync
                     (post.UserId, NotificationType.Favorite, UserName, postFavoriteVM.PostId);
 
@@ -165,7 +166,7 @@ namespace Social.Controllers
 
             var post = await _postService.GetPostByIdAsync(commentVM.PostId);
 
-           
+            if (loggedInUser != post.UserId)
                 await _notificationService.AddNewNotificationAsync
                     (post.UserId, NotificationType.Comment, UserName, commentVM.PostId);
             // redirect to the index page

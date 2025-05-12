@@ -43,7 +43,7 @@ namespace DataAccess.Services
             return suggestedFriends;
 
         }
-        public async Task UpdateRequestAsync(string requestId, string newStatus)
+        public async Task<FriendRequest> UpdateRequestAsync(string requestId, string newStatus)
         {
             var requestdb = await _sociaDbContex.FriendRequests.FirstOrDefaultAsync(n => n.Id == requestId);
             if (requestdb != null)
@@ -65,6 +65,7 @@ namespace DataAccess.Services
                 await _sociaDbContex.FriendShips.AddAsync(friendShip);
                 await _sociaDbContex.SaveChangesAsync();
             }
+            return requestdb;
         }
         public async Task SendRequestAsync(string senderId, string receiverId)
         {

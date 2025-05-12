@@ -3,6 +3,7 @@ using DataAccess.Helpers.Constants;
 using DataAccess.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +29,7 @@ namespace DataAccess.Services
                 Message = GetPostMessage(type, userfullname),
                 IsRead = false,
                 Type = type,
-                PostId = postId,
+                PostId = !postId.IsNullOrEmpty() ? postId : null,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
             };

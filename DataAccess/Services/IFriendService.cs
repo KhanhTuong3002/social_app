@@ -12,7 +12,7 @@ namespace DataAccess.Services
     {
         Task SendRequestAsync(string senderId, string receiverId);
 
-        Task UpdateRequestAsync(string requestId, string status);
+        Task<FriendRequest> UpdateRequestAsync(string requestId, string status);
 
         Task RemoveFriendAsync(string friendShipId);
 
