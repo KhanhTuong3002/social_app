@@ -3,5 +3,6 @@
     public class ProfilePictureVm
     {
         public IFormFile Avatar { get; set; }
+        public IFormFile Cover { get; set; }
     }
 }
