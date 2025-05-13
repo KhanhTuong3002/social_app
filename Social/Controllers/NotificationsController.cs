@@ -1,4 +1,6 @@
-﻿using DataAccess.Services;
+﻿using DataAccess.Helpers.Constants;
+using DataAccess.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.IdentityModel.Tokens;
@@ -7,6 +9,7 @@ using Social_App.Controllers.Base;
 
 namespace Social_App.Controllers
 {
+    [Authorize(Roles = $"{AppRoles.User},{AppRoles.Admin}")]
     public class NotificationsController : BaseController
     {
         public readonly INotificationService _notificationService;

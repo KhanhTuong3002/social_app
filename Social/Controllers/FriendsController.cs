@@ -1,5 +1,6 @@
 ﻿using DataAccess.Helpers.Constants;
 using DataAccess.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Protocol.Plugins;
 using Social_App.Controllers.Base;
@@ -7,6 +8,7 @@ using Social_App.ViewModel.Friends;
 
 namespace Social_App.Controllers
 {
+    [Authorize(Roles = $"{AppRoles.User},{AppRoles.Admin}")]
     public class FriendsController : BaseController
     {
         private readonly IFriendService _friendService;

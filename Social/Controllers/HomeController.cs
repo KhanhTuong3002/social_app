@@ -13,7 +13,7 @@ using System.Security.Claims;
 
 namespace Social.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = $"{AppRoles.User},{AppRoles.Admin}")]
     public class HomeController : BaseController
     {
         private readonly ILogger<HomeController> _logger;

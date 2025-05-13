@@ -58,6 +58,7 @@ builder.Services.AddScoped<IFileServices, FileServices>();
 builder.Services.AddScoped<IUserServices, UserServices>();
 builder.Services.AddScoped<IFriendService, FriendService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<IAdminServices, AdminServices>();
 
 
 builder.Services.AddScoped<DbContext, SociaDbContex>();

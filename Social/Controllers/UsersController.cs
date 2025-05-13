@@ -1,5 +1,7 @@
 ﻿using BussinessObject.Entities;
+using DataAccess.Helpers.Constants;
 using DataAccess.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Social_App.Controllers.Base;
@@ -7,6 +9,7 @@ using Social_App.ViewModel.Users;
 
 namespace Social_App.Controllers
 {
+    [Authorize(Roles = $"{AppRoles.User},{AppRoles.Admin}")]
     public class UsersController : BaseController
     {
         private readonly IUserServices _userServices;

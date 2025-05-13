@@ -6,10 +6,11 @@ using DataAccess.Helpers.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Social_App.Controllers.Base;
 using Microsoft.Extensions.Hosting;
+using DataAccess.Helpers.Constants;
 
 namespace Social_App.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = $"{AppRoles.User},{AppRoles.Admin}")]
     public class StoriesController : BaseController
     {
         public readonly IStoriesServices _storiesServices;

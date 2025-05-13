@@ -113,6 +113,14 @@ namespace DataAccess.Services
             await _context.Reports.AddAsync(newReport);
             await _context.SaveChangesAsync();
 
+            var post = await _context.Posts.FirstOrDefaultAsync(n => n.PostId == postId);
+            if (post != null)
+            {
+                post.NrofRepost += 1;
+                _context.Posts.Update(post);
+                await _context.SaveChangesAsync();
+            }
+
         }
 
         public async Task<GetNotificationDto> TogglePostFavoriteAsync(string postId, string userId)

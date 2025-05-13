@@ -1,11 +1,12 @@
-﻿using DataAccess.Services;
+﻿using DataAccess.Helpers.Constants;
+using DataAccess.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
 namespace Social_App.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = $"{AppRoles.User},{AppRoles.Admin}")]
     public class FavoritesController : Controller
     {
         private readonly IPostService _postService;

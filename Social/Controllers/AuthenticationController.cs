@@ -48,8 +48,14 @@ namespace Social_App.Controllers
 
             var result = await _signInManager.PasswordSignInAsync(existingUser.UserName, loginVM.Password, isPersistent: false, lockoutOnFailure: false);
 
-            if (result.Succeeded)                                          
-                return RedirectToAction("Index", "Home");                         
+            if (result.Succeeded)
+            {
+                if(User.IsInRole(AppRoles.Admin))
+                  return RedirectToAction("Index", "Admin");
+                else
+                    return RedirectToAction("Index", "Home");
+            }                                       
+                                     
             ModelState.AddModelError(string.Empty, "Invalid login attempt");
             return View(loginVM);
         }

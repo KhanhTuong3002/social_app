@@ -1,0 +1,57 @@
+﻿@model List<Post>
+
+<main id="site__main" class="2xl:ml-[--w-side]  xl:ml-[--w-side-sm] p-2.5 h-[calc(100vh-var(--m-top))] mt-[--m-top]">
+
+    <h3>Reported posts</h3>
+    <hr />
+
+    @foreach (var post in Model)
+    {
+        TimeSpan timeSpanSincePosted = DateTime.UtcNow.Subtract(post.CreatedAt);
+
+        string displayTime = timeSpanSincePosted switch
+        {
+            var t when t.TotalDays >= 1 => $"{(int)t.TotalDays}d ago",
+            var t when t.TotalHours >= 1 => $"{(int)t.TotalHours}h ago",
+            var t when t.TotalMinutes >= 1 => $"{(int)t.TotalMinutes}m ago",
+            _ => "Just now"
+        };
+
+        <div class="bg-white rounded-xl shadow-sm text-sm font-medium border1">
+
+            @* Post heading *@
+            <div class="flex gap-3 sm:p-4 p-2.5 text-sm font-medium">
+                <a>
+                    <img src="@(!string.IsNullOrEmpty(post.user.AvatarUrl) ?
+        Url.Content("~/"+post.user.AvatarUrl) :
+        Url.Content("~/images/avatar/user.png"))" class="w-9 h-9 rounded-full" />
+                </a>
+                <div class="flex-1">
+                    <a>
+                        <h4 class="text-black">@post.user.FullName</h4>
+                        <div class="text-xs text-gray-500/80" title="@post.CreatedAt.ToString("MM/dd/yyyy HH:mm")"> @displayTime </div>
+                    </a>
+                </div>
+
+            </div>
+
+            @* Post content *@
+            <a>
+                <div class="sm:px-4 p-2.5 pt-0 w-full">
+                    <p class="font-normal">
+                        @post.Content
+                    </p>
+                </div>
+            </a>
+
+            @if (!string.IsNullOrEmpty(post.ImageUrl))
+            {
+                <a>
+                    <div class="relative w-[580px] h-[620px]">
+                        <img src="@Url.Content("~/"+post.ImageUrl)" class="sm:rounded-lg w-[580px] h-[620px] object-cover" />
+                    </div>
+                </a>
+            }
+        </div>
+    }
+</main>

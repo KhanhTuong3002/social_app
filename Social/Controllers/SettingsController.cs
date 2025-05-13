@@ -1,4 +1,5 @@
 ﻿using BussinessObject.Entities;
+using DataAccess.Helpers.Constants;
 using DataAccess.Helpers.Enums;
 using DataAccess.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -10,7 +11,7 @@ using System.Security.Claims;
 
 namespace Social_App.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = $"{AppRoles.User},{AppRoles.Admin}")]
     public class SettingsController : BaseController
     {
         private readonly IUserServices _userServices;
