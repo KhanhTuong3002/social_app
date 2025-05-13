@@ -20,5 +20,18 @@ namespace Social_App.Controllers
 
             return View(reportedPosts);
         }
+        [HttpPost]
+
+        public async Task<IActionResult> ApproveReport(string postId)
+        {
+            await _adminServices.ApproveReportAsync(postId);
+            return RedirectToAction("Index");
+        }
+        [HttpPost]
+        public async Task<IActionResult> RejectReport(string postId)
+        {
+            await _adminServices.RejectReportAsync(postId);
+            return RedirectToAction("Index");
+        }
     }
 }

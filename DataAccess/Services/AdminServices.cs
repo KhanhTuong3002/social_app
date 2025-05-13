@@ -16,6 +16,19 @@ namespace DataAccess.Services
             _sociaDbContex = sociaDbContex;
         }
 
+        public async Task ApproveReportAsync(string postId)
+        {
+            var postDb = await _sociaDbContex.Posts
+                .FirstOrDefaultAsync(n => n.PostId == postId);
+
+            if (postDb != null)
+            {
+                postDb.IsDeleted = true;
+                _sociaDbContex.Posts.Update(postDb);
+                await _sociaDbContex.SaveChangesAsync();
+            }
+        }
+
         public async Task<List<Post>> GetReportedPostsAsync()
         {
             //var posts = await _context.Posts
@@ -29,6 +42,26 @@ namespace DataAccess.Services
                 .ToListAsync();
 
             return posts;
+        }
+
+        public async Task RejectReportAsync(string postId)
+        {
+            var postDb = await _sociaDbContex.Posts
+                .FirstOrDefaultAsync(n => n.PostId == postId);
+
+            if (postDb != null)
+            {
+                postDb.NrofRepost = 0;
+                _sociaDbContex.Posts.Update(postDb);
+                await _sociaDbContex.SaveChangesAsync();
+            }
+            var postReport = await _sociaDbContex.Reports
+                .Where(n => n.PostId == postId).ToListAsync();
+            if (postReport.Any())
+            {
+                _sociaDbContex.Reports.RemoveRange(postReport);
+                await _sociaDbContex.SaveChangesAsync();
+            }
         }
     }
 }

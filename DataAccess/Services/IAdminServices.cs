@@ -10,5 +10,7 @@ namespace DataAccess.Services
     public interface IAdminServices
     {
         Task<List<Post>> GetReportedPostsAsync();
+        Task ApproveReportAsync(string postId);
+        Task RejectReportAsync(string postId);
     }
 }
