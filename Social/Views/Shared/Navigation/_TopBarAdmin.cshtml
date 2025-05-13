@@ -2,6 +2,7 @@
 @inject UserManager<User> UserManager
 @{
     var loggedInUser = await UserManager.GetUserAsync(User);
+    var currentUserId = loggedInUser?.Id;
     var userName = loggedInUser?.UserName;
     var fullName = loggedInUser?.FullName;
     var avatarUrl = loggedInUser?.AvatarUrl;
@@ -64,7 +65,7 @@
                 </div>
                 <div class="hidden bg-white rounded-lg drop-shadow-xl w-64 border2" uk-drop="offset:6;pos: bottom-right;animate-out: true;">
 
-                    <a>
+                    <a asp-controller="Users" asp-action="Details" asp-route-userid="@currentUserId">
                         <div class="p-4 py-5 flex items-center gap-4">
                             <img src="@avatarPath" class="w-10 h-10 rounded-full shadow" />
                             <div class="flex-1">

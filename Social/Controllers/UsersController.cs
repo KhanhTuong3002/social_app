@@ -34,6 +34,6 @@ namespace Social_App.Controllers
                 Posts = userPosts
             };
             return View(userPofileVM);
-        }
+        }    
     }
 }
