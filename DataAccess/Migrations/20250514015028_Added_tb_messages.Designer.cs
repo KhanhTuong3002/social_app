@@ -4,6 +4,7 @@ using DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(SociaDbContex))]
-    partial class SociaDbContexModelSnapshot : ModelSnapshot
+    [Migration("20250514015028_Added_tb_messages")]
+    partial class Added_tb_messages
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -679,12 +682,11 @@ namespace DataAccess.Migrations
             modelBuilder.Entity("BussinessObject.Entities.Message", b =>
                 {
                     b.HasOne("BussinessObject.Entities.User", "Receiver")
-                        .WithMany("MessagesReceived")
-                        .HasForeignKey("ReceiverId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .WithMany()
+                        .HasForeignKey("ReceiverId");
 
                     b.HasOne("BussinessObject.Entities.User", "Sender")
-                        .WithMany("MessagesSent")
+                        .WithMany("Messages")
                         .HasForeignKey("SenderId")
                         .OnDelete(DeleteBehavior.Restrict);
 
@@ -819,9 +821,7 @@ namespace DataAccess.Migrations
 
                     b.Navigation("Likes");
 
-                    b.Navigation("MessagesReceived");
-
-                    b.Navigation("MessagesSent");
+                    b.Navigation("Messages");
 
                     b.Navigation("Notifications");
 

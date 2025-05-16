@@ -47,7 +47,10 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 });
 builder.Services.AddAuthorization();
 
-builder.Services.AddSignalR();
+builder.Services.AddSignalR().AddHubOptions<ChatHub>(options =>
+{
+    options.ClientTimeoutInterval = TimeSpan.FromMinutes(5);
+});
 
 
 //Services Configuration
@@ -100,5 +103,6 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.MapHub<NotificationHub>("/notificationHub");
+app.MapHub<ChatHub>("/chatHub");
 
 app.Run();

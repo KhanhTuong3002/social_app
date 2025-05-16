@@ -27,5 +27,7 @@ namespace BussinessObject.Entities
         public ICollection<Story> Stories { get; set; } = new List<Story>();
         public ICollection<HashTag> HashTags { get; set; } = new List<HashTag>();
         public ICollection<Notification> Notifications { get; set; } = new List<Notification>();
+        public ICollection<Message> MessagesSent { get; set; } = new List<Message>();
+        public ICollection<Message> MessagesReceived { get; set; } = new List<Message>();
     }
 }

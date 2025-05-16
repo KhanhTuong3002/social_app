@@ -34,7 +34,9 @@ namespace DataAccess
         public DbSet<HashTag> HashTags { get; set; }
         public DbSet<FriendRequest> FriendRequests { get; set; }
         public DbSet<FriendShip> FriendShips { get; set; }
-        public DbSet<Notification> Notifications { get; set; } 
+        public DbSet<Notification> Notifications { get; set; }
+
+        public DbSet<Message> Message { get; set; } // Rename to Message
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -125,7 +127,18 @@ namespace DataAccess
                 .WithMany(u => u.Reports)
                 .HasForeignKey(l => l.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
+            //message
+            modelBuilder.Entity<Message>()
+               .HasOne(m => m.Sender)
+               .WithMany(u => u.MessagesSent)
+               .HasForeignKey(m => m.SenderId)
+               .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Message>()
+                .HasOne(m => m.Receiver)
+                .WithMany(u => u.MessagesReceived)
+                .HasForeignKey(m => m.ReceiverId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             base.OnModelCreating(modelBuilder);
 
