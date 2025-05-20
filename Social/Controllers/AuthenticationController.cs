@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Social_App.ViewModel.Authentication;
 using System.Security.Claims;
 using Social_App.ViewModel.Settings;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Social_App.Controllers
 {
@@ -161,9 +162,10 @@ namespace Social_App.Controllers
         public async Task<IActionResult> UpdateProfile(ProfileVm profileVm)
         {
             var loggedInUser = await _userManager.GetUserAsync(User);
+            var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
             if (!ModelState.IsValid)
             {
-                TempData["ProfileError"] = "Input can only contain letters and cannot Contain 'admin'";
+                TempData["ProfileError"] = string.Join(" | ", errors); 
                 TempData["ActiveTab"] = "Profile";
                 return RedirectToAction("Index", "Settings");
             }
