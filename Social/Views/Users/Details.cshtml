@@ -50,8 +50,9 @@
 
                             <h3 class="font-bold text-lg">
                                 Friends
-                               @*  <span class="block text-sm text-gray-500 mt-0. font-normal"> 20 friends </span> *@
-                                <p class="text-sm text-gray-500 mt-1">@Model.Friends.Count bạn bè</p>
+                                <p class="text-sm text-gray-500 mt-1">
+                                    @Model.Friends.Count @(@Model.Friends.Count <= 1 ? "friend" : "friends")
+                                </p>
                             </h3>
 
                         </div>
@@ -64,22 +65,7 @@
                                          class="w-16 h-16 rounded-full object-cover mx-auto" />
                                     <div class="mt-2">@friend.FullName</div>
                                 </div>
-                            }
-                           @*  <div>
-                                <div class="relative w-full aspect-square rounded-lg overflow-hidden">
-                                    <img src="~/images/avatar/user.png" class="object-cover w-full h-full inset-0" />
-                                </div>
-
-                                <div class="mt-2 line-clamp-1">Tèo</div>
-                            </div>
-
-                            <div>
-                                <div class="relative w-full aspect-square rounded-lg overflow-hidden">
-                                    <img src="~/images/avatar/user.png" class="object-cover w-full h-full inset-0" />
-                                </div>
-
-                                <div class="mt-2 line-clamp-1">Tí</div>
-                            </div> *@
+                            }                         
                         </div>
                     </div>
                 </div>
