@@ -50,13 +50,22 @@
 
                             <h3 class="font-bold text-lg">
                                 Friends
-                                <span class="block text-sm text-gray-500 mt-0. font-normal"> 20 friends </span>
+                               @*  <span class="block text-sm text-gray-500 mt-0. font-normal"> 20 friends </span> *@
+                                <p class="text-sm text-gray-500 mt-1">@Model.Friends.Count bạn bè</p>
                             </h3>
 
                         </div>
 
                         <div class="grid grid-cols-3 gap-2 gap-y-5 text-center text-sm mt-4 mb-2">
-                            <div>
+                            @foreach (var friend in Model.Friends)
+                            {
+                                <div class="text-center">
+                                    <img src="@Url.Content(string.IsNullOrEmpty(friend.AvatarUrl) ? "~/images/avatar/user.png" : "~/" + friend.AvatarUrl)"
+                                         class="w-16 h-16 rounded-full object-cover mx-auto" />
+                                    <div class="mt-2">@friend.FullName</div>
+                                </div>
+                            }
+                           @*  <div>
                                 <div class="relative w-full aspect-square rounded-lg overflow-hidden">
                                     <img src="~/images/avatar/user.png" class="object-cover w-full h-full inset-0" />
                                 </div>
@@ -70,7 +79,7 @@
                                 </div>
 
                                 <div class="mt-2 line-clamp-1">Tí</div>
-                            </div>
+                            </div> *@
                         </div>
                     </div>
                 </div>

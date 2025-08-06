@@ -14,10 +14,12 @@ namespace Social_App.Controllers
     {
         private readonly IUserServices _userServices;
         private readonly UserManager<User> _userManager;
-        public UsersController(IUserServices userServices, UserManager<User> userManager)
+        private readonly IFriendService _friendService;
+        public UsersController(IUserServices userServices, UserManager<User> userManager, IFriendService friendService)
         {
             _userServices = userServices;
             _userManager = userManager;
+            _friendService = friendService;
         }
         public IActionResult Index()
         {
@@ -28,10 +30,18 @@ namespace Social_App.Controllers
             var user = await _userManager.FindByIdAsync(userid);
             var userPosts = await _userServices.GetUserPosts(userid);
 
+            var friendships = await _friendService.GetFriendsAsync(userid);
+
+            var friends = friendships
+                .Select(f => f.SenderId == userid ? f.Receiver : f.Sender)
+                .ToList();
+
+
             var userPofileVM = new GetUserProfileVM()
             {
                 User = user,
-                Posts = userPosts
+                Posts = userPosts,
+                Friends = friends
             };
             return View(userPofileVM);
         }    
