@@ -26,7 +26,7 @@
 
                         <div class="w-14 h-14 flex-shrink-0 rounded-lg relative">
                             <img src="@(string.IsNullOrEmpty(friend.AvatarUrl) ? Url.Content("~/images/avatar/user.png") :
-                             Url.Content(friend.AvatarUrl))"
+                             friend.AvatarUrl)"
                                  class="absolute w-full h-full inset-0 rounded-md object-cover shadow-sm" />
                         </div>
 
@@ -69,7 +69,7 @@
 
                         <div class="w-14 h-14 flex-shrink-0 rounded-lg relative">
                             <img src="@(string.IsNullOrEmpty(request.receiver.AvatarUrl) ? Url.Content("~/images/avatar/user.png") :
-                            Url.Content(request.sender.AvatarUrl))"
+                            request.sender.AvatarUrl)"
                                  class="absolute w-full h-full inset-0 rounded-md object-cover shadow-sm" />
                         </div>
 
@@ -113,7 +113,7 @@
 
                         <div class="w-14 h-14 flex-shrink-0 rounded-lg relative">
                             <img src="@(string.IsNullOrEmpty(request.receiver.AvatarUrl) ? Url.Content("~/images/avatar/user.png") :
-                            Url.Content(request.receiver.AvatarUrl))"
+                            request.receiver.AvatarUrl)"
                                  class="absolute w-full h-full inset-0 rounded-md object-cover shadow-sm" />
                         </div>
 
