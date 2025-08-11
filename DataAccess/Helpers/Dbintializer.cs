@@ -38,7 +38,7 @@ namespace DataAccess.Helpers
             }
 
             // Seed users with roles
-            if (!userManager.Users.Any(u => !string.IsNullOrEmpty(u.Email)))
+            if (!userManager.Users.Any())
             {
                 var userPassword = "Admin@123";
 
