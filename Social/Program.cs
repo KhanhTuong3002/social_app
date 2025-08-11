@@ -52,7 +52,8 @@ builder.Services.AddSignalR().AddHubOptions<ChatHub>(options =>
     options.ClientTimeoutInterval = TimeSpan.FromMinutes(5);
 });
 
-var blobConnectionString = builder.Configuration["AzureStorerageConnectionString"];
+var blobConnectionString = builder.Configuration.GetConnectionString("AzureStorerageConnectionString")
+    ?? throw new InvalidOperationException("Connection string 'AzureBlobStorage' not found.");
 
 //Services Configuration
 builder.Services.AddScoped<IPostService, PostService>();
