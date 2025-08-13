@@ -35,14 +35,14 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddGoogle(options =>
 {
-    options.ClientId = builder.Configuration["Auth:Google:ClientId"];
-    options.ClientSecret = builder.Configuration["Auth:Google:ClientSecret"];
+    options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+    options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
     options.CallbackPath = "/signin-google";
 })
 .AddGitHub(options =>
 {
-        options.ClientId = builder.Configuration["Auth:Github:ClientId"];
-        options.ClientSecret = builder.Configuration["Auth:Github:ClientSecret"];
+        options.ClientId = builder.Configuration["Authentication:Github:ClientId"];
+        options.ClientSecret = builder.Configuration["Authentication:Github:ClientSecret"];
         options.CallbackPath = "/signin-github";
 });
 builder.Services.AddAuthorization();
@@ -52,8 +52,8 @@ builder.Services.AddSignalR().AddHubOptions<ChatHub>(options =>
     options.ClientTimeoutInterval = TimeSpan.FromMinutes(5);
 });
 
-var blobConnectionString = builder.Configuration.GetConnectionString("AzureStorerageConnectionString")
-    ?? throw new InvalidOperationException("Connection string 'AzureBlobStorage' not found.");
+var blobConnectionString = builder.Configuration["AzureStorerageConnectionString"]
+    ?? throw new InvalidOperationException("Connection string 'AzureStorerageConnectionString' not found.");
 
 //Services Configuration
 builder.Services.AddScoped<IPostService, PostService>();
