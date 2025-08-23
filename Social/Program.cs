@@ -31,6 +31,8 @@ builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Authentication/Login";
     options.AccessDeniedPath = "/Authentication/AccessDenied";
+    options.ExpireTimeSpan = TimeSpan.FromDays(14); // time before cookie expires
+    options.SlidingExpiration = true;
 });
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddGoogle(options =>

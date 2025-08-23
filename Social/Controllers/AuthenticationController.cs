@@ -35,6 +35,7 @@ namespace Social_App.Controllers
         {
             if (!ModelState.IsValid)
                 return View(loginVM);
+
             var existingUser = await _userManager.FindByEmailAsync(loginVM.Email);
             if(existingUser == null)
             {
@@ -47,7 +48,7 @@ namespace Social_App.Controllers
             if (!existingUserClaims.Any(c => c.Type == CustomClaim.FullName))
                 await _userManager.AddClaimAsync(existingUser, new Claim(CustomClaim.FullName, existingUser.FullName));
 
-            var result = await _signInManager.PasswordSignInAsync(existingUser.UserName, loginVM.Password, isPersistent: false, lockoutOnFailure: false);
+            var result = await _signInManager.PasswordSignInAsync(existingUser.UserName, loginVM.Password, isPersistent: loginVM.RememberMe, lockoutOnFailure: false);
 
             if (result.Succeeded)
             {
@@ -240,8 +241,6 @@ namespace Social_App.Controllers
             await _signInManager.SignInAsync(user, isPersistent: false);
             return RedirectToAction("Index", "Home");
         }
-
-
 
 
         [Authorize]
