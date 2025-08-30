@@ -14,6 +14,7 @@ namespace BussinessObject.Entities
         [Key]
         public string PostId { get; set; } = SnowflakeGenerator.Generate();
         public string? ImageUrl { get; set; }
+        public string? VideoUrl { get; set; }
         public string? Content { get; set; }
         public bool isPrivate { get; set; } = false;
         public int NrofRepost { get; set; }

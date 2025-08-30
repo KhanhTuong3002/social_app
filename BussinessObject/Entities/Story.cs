@@ -11,6 +11,7 @@ namespace BussinessObject.Entities
     {
         public string Id { get; set; } = SnowflakeGenerator.Generate();
         public string? ImageUrl { get; set; }
+        public string? VideoUrl { get; set; }
         public DateTime CreatedAt { get; set; }
 
         public bool IsDeleted { get; set; }

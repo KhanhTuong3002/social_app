@@ -3,6 +3,7 @@ using Azure.Storage.Blobs.Models;
 using BussinessObject.Entities;
 using DataAccess.Helpers.Enums;
 using Microsoft.AspNetCore.Http;
+using Microsoft.VisualBasic.FileIO;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -30,6 +31,8 @@ namespace DataAccess.Services
                 ImageFileType.storyImage => "stories",
                 ImageFileType.profileImage => "profiles",
                 ImageFileType.coverImage => "covers",
+                mageFileType.PostVideo => "posts",
+                ImageFileType.StoryVideo =>"stories",
                 _ => throw new ArgumentException("Invalid file type", nameof(imageFileType))
             };
 
@@ -57,7 +60,7 @@ namespace DataAccess.Services
            /* if (file != null && file.Length > 0)
             {
                 string rootFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
-                if (file.ContentType.Contains("image"))
+                if (file.ContentType.Contains("image")|| file.ContentType.Contains("video"))
                 {
                     string rootFolderPathImage = Path.Combine(rootFolderPath, containerName);
                     Directory.CreateDirectory(rootFolderPathImage); // Create the directory if it doesn't exist

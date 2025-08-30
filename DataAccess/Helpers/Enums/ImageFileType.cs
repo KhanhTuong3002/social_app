@@ -11,6 +11,8 @@ namespace DataAccess.Helpers.Enums
         postImage,
         storyImage,
         profileImage,
-        coverImage
+        coverImage,
+        PostVideo,
+        StoryVideo
     }
 }

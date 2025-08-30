@@ -3,5 +3,6 @@
     public class StoryVM
     {
         public IFormFile Image { get; set; }
+        public IFormFile? Video { get; set; }
     }
 }

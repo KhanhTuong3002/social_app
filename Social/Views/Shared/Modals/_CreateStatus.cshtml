@@ -30,6 +30,18 @@
                 <button type="button" id="imageUploadBtn" class="flex items-center gap-1.5 bg-sky-50 text-sky-600 rounded-full py-1 px-2 border-2 border-sky-100">
                     <ion-icon name="image" class="text-base"></ion-icon> Image
                 </button>
+
+                <!-- Upload video -->
+                <input id="videoUpload" type="file" class="hidden" name="video" accept="video/mp4,video/webm,video/ogg" />
+
+                <div id="videoPreviewContainer" class="hidden">
+                    <video id="videoPreview" controls class="w-full h-auto rounded"></video>
+                </div>
+
+                <button type="button" id="videoUploadBtn"
+                        class="flex items-center gap-1.5 bg-purple-50 text-purple-600 rounded-full py-1 px-2 border-2 border-purple-100">
+                    <ion-icon name="videocam" class="text-base"></ion-icon> Video
+                </button>
             </div>
 
             <div class="p-5 flex justify-between items-center">
@@ -62,6 +74,20 @@
            reader.readAsDataURL(file);
        } else {
            imagePreviewContainer.classList.add('hidden'); }
+    });
+    // Preview video
+    document.getElementById('videoUploadBtn').addEventListener('click', function () {
+        document.getElementById('videoUpload').click();
+    });
+
+    document.getElementById('videoUpload').addEventListener('change', function (event) {
+        const file = event.target.files[0];
+        if (file) {
+            const videoPreview = document.getElementById('videoPreview');
+            const url = URL.createObjectURL(file);
+            videoPreview.src = url;
+            document.getElementById('videoPreviewContainer').classList.remove('hidden');
+        }
     });
    
 

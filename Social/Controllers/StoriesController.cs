@@ -29,9 +29,10 @@ namespace Social_App.Controllers
             if (loggedInUser == null) return RedirectToLogin();
 
             var imageUploadPath = await _fileServices.UploadFileAsync(storyVM.Image,ImageFileType.storyImage);
+            var videoUploadPath = await _fileServices.UploadFileAsync(storyVM.Video, ImageFileType.StoryVideo);
 
             // Kiểm tra nếu cả content và image đều rỗng
-            if (storyVM.Image == null)
+            if (storyVM.Image == null && storyVM.Video == null)
             {
                 // Trả về thông báo lỗi hoặc redirect về trang trước đó
                 TempData["ErrorStories"] = "Oh....Failed! You must include an image to create a stories.";
@@ -41,6 +42,7 @@ namespace Social_App.Controllers
             var newStory = new Story()
             {
                 ImageUrl = imageUploadPath,
+                VideoUrl = videoUploadPath,
                 CreatedAt = DateTime.UtcNow,
                 IsDeleted = false,
                 UserId = loggedInUser.ToString(),
