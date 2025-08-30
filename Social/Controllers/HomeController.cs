@@ -61,9 +61,10 @@ namespace Social.Controllers
             if (loggedInUser == null) return RedirectToLogin();
 
             var imageUploadPath = await _fileServices.UploadFileAsync(post.image, ImageFileType.postImage);
+            var videoUploadPath = await _fileServices.UploadFileAsync(post.video, ImageFileType.PostVideo);
 
             // Kiểm tra nếu cả content và image đều rỗng
-            if (string.IsNullOrWhiteSpace(post.content) && post.image == null)
+            if (string.IsNullOrWhiteSpace(post.content) && post.image == null && post.video == null )
             {
                 // Trả về thông báo lỗi hoặc redirect về trang trước đó
                 TempData["Error"] = "Oh....Failed! You must include either content or an image to create a post.";
@@ -78,6 +79,7 @@ namespace Social.Controllers
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow,
                 ImageUrl = imageUploadPath,
+                VideoUrl = videoUploadPath,
                 NrofRepost = 0,
                 UserId = loggedInUser,
             };

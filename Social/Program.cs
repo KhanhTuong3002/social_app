@@ -5,6 +5,7 @@ using DataAccess.Hubs;
 using DataAccess.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -26,6 +27,12 @@ builder.Services.AddIdentity<User, IdentityRole<string>>()
 
    .AddEntityFrameworkStores<SociaDbContex>()
    .AddDefaultTokenProviders();
+
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 524288000; // 500MB
+});
+
 
 builder.Services.ConfigureApplicationCookie(options =>
 {

@@ -1,6 +1,7 @@
 ﻿using BussinessObject.Entities;
 using DataAccess.Helpers.Enums;
 using Microsoft.AspNetCore.Http;
+using Microsoft.VisualBasic.FileIO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,13 +21,15 @@ namespace DataAccess.Services
                 ImageFileType.storyImage => Path.Combine("images", "stories"),
                 ImageFileType.profileImage => Path.Combine("images", "profiles"),
                 ImageFileType.coverImage => Path.Combine("images", "covers"),
+                ImageFileType.PostVideo => Path.Combine("videos", "posts"),
+                ImageFileType.StoryVideo => Path.Combine("videos", "stories"),
                 _ => throw new ArgumentException("Invalid file type", nameof(imageFileType))
             };
 
             if (file != null && file.Length > 0)
             {
                 string rootFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
-                if (file.ContentType.Contains("image"))
+                if (file.ContentType.Contains("image")|| file.ContentType.Contains("video"))
                 {
                     string rootFolderPathImage = Path.Combine(rootFolderPath, fileUploadPath);
                     Directory.CreateDirectory(rootFolderPathImage); // Create the directory if it doesn't exist
