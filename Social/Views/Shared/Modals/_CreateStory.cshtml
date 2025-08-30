@@ -25,7 +25,10 @@
                             <span id="storyUploadBtn" class="text-white mt-2">Browse to Upload image</span>
 
                         </label>
-                        <img id="storyPreview" />
+                        <div id="previewContainer" class="w-full h-72 relative border1 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
+                            <img id="storyPreview" class="hidden w-full h-auto" />
+                            <video id="storyPreviewVideo" class="hidden w-full h-auto" controls></video>
+                        </div>
                     </div>
                 </div>
                 <div class="flex justify-between items-center">
@@ -43,7 +46,7 @@
 <script>
     document.getElementById('storyUpload').addEventListener('change', (event) => {
         const file = event.target.files[0];
-        const storyPreview = document.getElementById('storyPreview');
+        const imgPreview = document.getElementById('storyPreview');
         const videoPreview = document.getElementById('storyPreviewVideo');
 
         if (file) {
