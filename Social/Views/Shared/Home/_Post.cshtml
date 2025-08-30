@@ -25,7 +25,7 @@
 
     bool showAllComments = ViewData["showAllComment"] as bool? ?? false;
 
-    
+
 }
 
 <div id="post-@Model.PostId" class="bg-white rounded-xl shadow-sm text-sm font-medium border1">
@@ -60,9 +60,9 @@
 
 
                     <button type="button" onclick="openPostDeleteCfm('@Model.PostId')" class="text-red-400 hover:!bg-red-50 delete-post-btn">
-                            <ion-icon name="trash-bin-outline"></ion-icon>  Delete Post
-                        </button>
-                    
+                        <ion-icon name="trash-bin-outline"></ion-icon>  Delete Post
+                    </button>
+
                 }
                 @if (!isReported)
                 {
@@ -79,7 +79,7 @@
     </div>
 
     @* Post content *@
-    <a asp-controller="Home" asp-action="Details" asp-route-postId ="@Model.PostId">
+    <a asp-controller="Home" asp-action="Details" asp-route-postId="@Model.PostId">
         <div class="sm:px-4 p-2.5 pt-0 w-full">
             <p class="font-normal">
                 @Model.Content
@@ -89,10 +89,19 @@
     @if (!string.IsNullOrEmpty(Model.ImageUrl) && !string.IsNullOrWhiteSpace(Model.ImageUrl))
     {
         <a asp-controller="Home" asp-action="Details" asp-route-postId="@Model.PostId">
-            <div class="relative w-fullh-full">
+            <div class="relative w-full h-full">
                 <img src="@Model.ImageUrl" class="sm:rounded-lg w-full h-full object-cover" />
             </div>
         </a>
+    }
+    else if (!string.IsNullOrEmpty(Model.VideoUrl) && !string.IsNullOrWhiteSpace(Model.VideoUrl))
+    {
+        <div class="relative w-full h-full">
+            <video class="sm:rounded-lg w-full h-full object-cover" controls>
+                <source src="@Model.VideoUrl" type="video/mp4" />
+                Your browser does not support the video tag.
+            </video>
+        </div>
     }
 
     @* Icons *@
@@ -138,7 +147,7 @@
         <div class="p-2.5 border-t border-gray-100 font-normal space-y-3 relative">
             @foreach (var comment in showAllComments
             ? Model.Comments.OrderByDescending(n => n.CreatedAt)
-            : Model.Comments.OrderByDescending(n=>n.CreatedAt).Take(2))   
+            : Model.Comments.OrderByDescending(n => n.CreatedAt).Take(2))
             {
                 TimeSpan commentTimeSpanSincePosted = DateTime.UtcNow.Subtract(comment.CreatedAt);
                 string commentDisplayTime = commentTimeSpanSincePosted switch
@@ -155,7 +164,7 @@
                     <div class="flex-1">
                         <div class="flex justify-content-between">
                             <a asp-controller="Users" asp-action="Details" asp-route-userid="@comment.UserId"
-                                class="text-black font-medium inline-block flex-grow">
+                               class="text-black font-medium inline-block flex-grow">
                                 @comment.User.FullName
                             </a>
                             <small>
@@ -185,7 +194,7 @@
                     <a asp-controller="Home" asp-action="Details" asp-route-postId="@Model.PostId">
                         Show more comments....
                     </a>
-                    
+
                 </div>
             }
         </div>
