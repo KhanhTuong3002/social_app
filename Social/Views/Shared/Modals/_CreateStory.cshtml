@@ -19,8 +19,8 @@
                         <label class="flex flex-col justify-center items-center absolute -translate-x-1/2 left-1/2 bottom-0 z-10 w-full pb-6 pt-10 cursor-pointer bg-gradient-to-t from-gray-700/60">
                             <input id="storyUpload" hidden
                                    name="Image"
-                                   type="file" 
-                                accept="image/png, image/jpeg" />
+                                   type="file"
+                                   accept="image/png, image/jpeg, video/mp4, video/webm, video/ogg" />
                             <ion-icon name="image" class="text-3xl text-teal-600"></ion-icon>
                             <span id="storyUploadBtn" class="text-white mt-2">Browse to Upload image</span>
 
@@ -44,15 +44,25 @@
     document.getElementById('storyUpload').addEventListener('change', (event) => {
         const file = event.target.files[0];
         const storyPreview = document.getElementById('storyPreview');
+        const videoPreview = document.getElementById('storyPreviewVideo');
 
         if (file) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                storyPreview.src = e.target.result;
+            const url = URL.createObjectURL(file);
+
+            if (file.type.startsWith("image/")) {
+                imgPreview.src = url;
+                imgPreview.classList.remove("hidden");
+                videoPreview.classList.add("hidden");
+            } else if (file.type.startsWith("video/")) {
+                videoPreview.src = url;
+                videoPreview.classList.remove("hidden");
+                imgPreview.classList.add("hidden");
             }
-            reader.readAsDataURL(file);
         } else {
-            storyPreview.src = "";
+            imgPreview.src = "";
+            videoPreview.src = "";
+            imgPreview.classList.add("hidden");
+            videoPreview.classList.add("hidden");
         }
     });
 </script>
