@@ -31,7 +31,7 @@ namespace DataAccess.Services
                 ImageFileType.storyImage => "stories",
                 ImageFileType.profileImage => "profiles",
                 ImageFileType.coverImage => "covers",
-                mageFileType.PostVideo => "posts",
+                ImageFileType.PostVideo => "posts",
                 ImageFileType.StoryVideo =>"stories",
                 _ => throw new ArgumentException("Invalid file type", nameof(imageFileType))
             };
