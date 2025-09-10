@@ -61,14 +61,12 @@ builder.Services.AddSignalR().AddHubOptions<ChatHub>(options =>
     options.ClientTimeoutInterval = TimeSpan.FromMinutes(5);
 });
 
-var blobConnectionString = builder.Configuration["AzureStorerageConnectionString"]
-    ?? throw new InvalidOperationException("Connection string 'AzureStorerageConnectionString' not found.");
 
 //Services Configuration
 builder.Services.AddScoped<IPostService, PostService>();
 builder.Services.AddScoped<IHashtagServices, HashtagServices>();
 builder.Services.AddScoped<IStoriesServices, StoriesServices>();
-builder.Services.AddScoped<IFileServices>(s => new FileServices(blobConnectionString));
+builder.Services.AddScoped<IFileServices, FileServices>();
 builder.Services.AddScoped<IUserServices, UserServices>();
 builder.Services.AddScoped<IFriendService, FriendService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
