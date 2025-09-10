@@ -44,14 +44,14 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddGoogle(options =>
 {
-    options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
-    options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+    options.ClientId = builder.Configuration["Auth:Google:ClientId"];
+    options.ClientSecret = builder.Configuration["Auth:Google:ClientSecret"];
     options.CallbackPath = "/signin-google";
 })
 .AddGitHub(options =>
 {
-        options.ClientId = builder.Configuration["Authentication:Github:ClientId"];
-        options.ClientSecret = builder.Configuration["Authentication:Github:ClientSecret"];
+        options.ClientId = builder.Configuration["Auth:Github:ClientId"];
+        options.ClientSecret = builder.Configuration["Auth:Github:ClientSecret"];
         options.CallbackPath = "/signin-github";
 });
 builder.Services.AddAuthorization();
@@ -61,14 +61,12 @@ builder.Services.AddSignalR().AddHubOptions<ChatHub>(options =>
     options.ClientTimeoutInterval = TimeSpan.FromMinutes(5);
 });
 
-var blobConnectionString = builder.Configuration["AzureStorerageConnectionString"]
-    ?? throw new InvalidOperationException("Connection string 'AzureStorerageConnectionString' not found.");
 
 //Services Configuration
 builder.Services.AddScoped<IPostService, PostService>();
 builder.Services.AddScoped<IHashtagServices, HashtagServices>();
 builder.Services.AddScoped<IStoriesServices, StoriesServices>();
-builder.Services.AddScoped<IFileServices>(s => new FileServices(blobConnectionString));
+builder.Services.AddScoped<IFileServices, FileServices>();
 builder.Services.AddScoped<IUserServices, UserServices>();
 builder.Services.AddScoped<IFriendService, FriendService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
@@ -86,7 +84,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<SociaDbContex>();
-    await context.Database.MigrateAsync();
+    //await context.Database.MigrateAsync();
     await DbInitializer.SeedAsync(context);
 
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();

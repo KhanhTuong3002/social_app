@@ -14,7 +14,7 @@
                         <div class="relative overflow-hidden rounded-full md:border-[6px] border-gray-100 shrink-0">
                             <img src="@(string.IsNullOrEmpty(Model.User.AvatarUrl)
             ? Url.Content("~/images/avatar/user.png")
-            : Model.User.AvatarUrl)"
+            : Url.Content("~/" + Model.User.AvatarUrl))"
                                  class="w-full h-full object-cover" />
                         </div>
                     </div>
@@ -61,7 +61,7 @@
                             @foreach (var friend in Model.Friends)
                             {
                                 <div class="text-center">
-                                    <img src="@Url.Content(string.IsNullOrEmpty(friend.AvatarUrl) ? "~/images/avatar/user.png" : friend.AvatarUrl)"
+                                    <img src="@Url.Content(string.IsNullOrEmpty(friend.AvatarUrl) ? "~/images/avatar/user.png" : "~/" + friend.AvatarUrl)"
                                          class="w-16 h-16 rounded-full object-cover mx-auto" />
                                     <div class="mt-2">@friend.FullName</div>
                                 </div>
