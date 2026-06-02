@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<User> UserManager
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -33,12 +36,14 @@
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.19.1/dist/js/uikit.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.19.1/dist/js/uikit-icons.min.js"></script>
 
+    <!-- SignalR Client -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 
     @* Asset scripts *@
-    <script src="~/js/uikit.min.js"></script>
     <script src="~/js/simplebar.js"></script>
     <script src="~/js/script.js"></script>
 
@@ -47,5 +52,80 @@
     <script nomodule=nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
+
+    @if (User.Identity.IsAuthenticated)
+    {
+        var loggedInUser = await UserManager.GetUserAsync(User);
+        var currentUserId = loggedInUser?.Id;
+        
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                // Wait slightly for SignalR library to be parsed
+                setTimeout(() => {
+                    if (typeof signalR === 'undefined') {
+                        console.warn("SignalR not loaded globally.");
+                        return;
+                    }
+                    
+                    const isMessagesPage = window.location.pathname.toLowerCase().includes("/messages");
+                    
+                    const globalChatConnection = new signalR.HubConnectionBuilder()
+                        .withUrl("/chatHub")
+                        .withAutomaticReconnect()
+                        .build();
+
+                    globalChatConnection.on("ReceiveMessage", (message) => {
+                        console.log("Global Message Handler:", message);
+                        
+                        // If it's a message received by the logged in user
+                        if (message.receiverId === "@currentUserId") {
+                            
+                            // If we are on the Messages page and chatting with this sender, do NOT show toast
+                            if (isMessagesPage && typeof activeChatUserId !== 'undefined' && activeChatUserId === message.senderId) {
+                                return;
+                            }
+
+                            // Otherwise, display a premium toast notification
+                            const avatar = message.senderAvatarUrl || '/images/avatar/user.png';
+                            const toastMessage = `
+                                <a href="/Messages?userId=${message.senderId}" class="flex items-center gap-3 no-underline decoration-transparent hover:opacity-90 transition-all text-slate-800" style="text-decoration: none !important; color: #1e293b !important;">
+                                    <img src="${avatar}" class="w-10 h-10 rounded-full object-cover shrink-0 border" style="width: 40px; height: 40px; border-radius: 9999px; object-fit: cover;" />
+                                    <div class="min-w-0 flex-1">
+                                        <div class="font-bold text-xs flex items-center gap-1.5" style="font-weight: 700; font-size: 0.75rem; color: #0f172a; display: flex; align-items: center; gap: 6px;">
+                                            <span style="width: 6px; height: 6px; background-color: #2563eb; border-radius: 9999px; display: inline-block;"></span>
+                                            ${message.senderFullName}
+                                        </div>
+                                        <div style="font-size: 0.70rem; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px;">
+                                            ${message.content}
+                                        </div>
+                                    </div>
+                                </a>
+                            `;
+
+                            UIkit.notification({
+                                message: toastMessage,
+                                status: 'primary',
+                                pos: 'top-right',
+                                timeout: 6000
+                            });
+
+                            // Play a subtle modern notification sound
+                            try {
+                                const audio = new Audio("https://assets.mixkit.co/active_storage/sfx/2869/2869-600.wav");
+                                audio.volume = 0.4;
+                                audio.play();
+                            } catch (e) {
+                                console.log("Audio play blocked by browser policies.");
+                            }
+                        }
+                    });
+
+                    globalChatConnection.start()
+                        .then(() => console.log("Global Chat Connection initialized successfully."))
+                        .catch(err => console.error("Error starting Global Chat Connection: ", err));
+                }, 100);
+            });
+        </script>
+    }
 </body>
 </html>

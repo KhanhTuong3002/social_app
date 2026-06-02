@@ -17,42 +17,60 @@ localStorage.removeItem('theme')
 
 
 // add post upload image 
-document.getElementById('addPostUrl').addEventListener('change', function(){
-if (this.files[0] ) {
-    var picture = new FileReader();
-    picture.readAsDataURL(this.files[0]);
-    picture.addEventListener('load', function(event) {
-    document.getElementById('addPostImage').setAttribute('src', event.target.result);
-    document.getElementById('addPostImage').style.display = 'block';
+const addPostUrlEl = document.getElementById('addPostUrl');
+if (addPostUrlEl) {
+    addPostUrlEl.addEventListener('change', function(){
+        if (this.files[0] ) {
+            var picture = new FileReader();
+            picture.readAsDataURL(this.files[0]);
+            picture.addEventListener('load', function(event) {
+                const addPostImageEl = document.getElementById('addPostImage');
+                if (addPostImageEl) {
+                    addPostImageEl.setAttribute('src', event.target.result);
+                    addPostImageEl.style.display = 'block';
+                }
+            });
+        }
     });
-    }
-});
+}
 
 
 // Create Status upload image 
-document.getElementById('createStatusUrl').addEventListener('change', function(){
-if (this.files[0] ) {
-    var picture = new FileReader();
-    picture.readAsDataURL(this.files[0]);
-    picture.addEventListener('load', function(event) {
-    document.getElementById('createStatusImage').setAttribute('src', event.target.result);
-    document.getElementById('createStatusImage').style.display = 'block';
+const createStatusUrlEl = document.getElementById('createStatusUrl');
+if (createStatusUrlEl) {
+    createStatusUrlEl.addEventListener('change', function(){
+        if (this.files[0] ) {
+            var picture = new FileReader();
+            picture.readAsDataURL(this.files[0]);
+            picture.addEventListener('load', function(event) {
+                const createStatusImageEl = document.getElementById('createStatusImage');
+                if (createStatusImageEl) {
+                    createStatusImageEl.setAttribute('src', event.target.result);
+                    createStatusImageEl.style.display = 'block';
+                }
+            });
+        }
     });
 }
-});
 
 
 // create product upload image
-document.getElementById('createProductUrl').addEventListener('change', function(){
-if (this.files[0] ) {
-    var picture = new FileReader();
-    picture.readAsDataURL(this.files[0]);
-    picture.addEventListener('load', function(event) {
-    document.getElementById('createProductImage').setAttribute('src', event.target.result);
-    document.getElementById('createProductImage').style.display = 'block';
+const createProductUrlEl = document.getElementById('createProductUrl');
+if (createProductUrlEl) {
+    createProductUrlEl.addEventListener('change', function(){
+        if (this.files[0] ) {
+            var picture = new FileReader();
+            picture.readAsDataURL(this.files[0]);
+            picture.addEventListener('load', function(event) {
+                const createProductImageEl = document.getElementById('createProductImage');
+                if (createProductImageEl) {
+                    createProductImageEl.setAttribute('src', event.target.result);
+                    createProductImageEl.style.display = 'block';
+                }
+            });
+        }
     });
 }
-});
 
 
 

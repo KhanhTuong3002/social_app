@@ -1,0 +1,540 @@
+@using System.Security.Claims
+@inject UserManager<User> UserManager
+@{
+    ViewData["Title"] = "Messages";
+    var loggedInUser = await UserManager.GetUserAsync(User);
+    var currentUserId = loggedInUser?.Id;
+}
+
+<main id="site__main" class="2xl:ml-[--w-side] xl:ml-[--w-side-sm] h-[calc(100vh-var(--m-top))] mt-[--m-top] p-4 bg-slate-50 flex overflow-hidden">
+    <div class="flex flex-col md:flex-row w-full max-w-[1200px] mx-auto bg-white rounded-2xl shadow-sm border border-slate-200 h-full overflow-hidden">
+        
+        <!-- Left Sidebar: Conversations & Friends -->
+        <div id="chat-sidebar" class="w-full md:w-80 lg:w-96 flex flex-col border-r border-slate-100 h-full overflow-hidden bg-slate-50/50">
+            <!-- Sidebar Header -->
+            <div class="p-4 border-b border-slate-100 bg-white">
+                <div class="flex items-center justify-between mb-3">
+                    <h1 class="text-xl font-bold text-slate-800">Messages</h1>
+                </div>
+                
+                <!-- Custom Tabs -->
+                <div class="flex bg-slate-100 p-1 rounded-xl">
+                    <button id="tab-chats" class="flex-1 py-1.5 text-xs font-semibold rounded-lg bg-white text-slate-800 shadow-sm transition-all focus:outline-none">
+                        Chats
+                    </button>
+                    <button id="tab-friends" class="flex-1 py-1.5 text-xs font-semibold rounded-lg text-slate-500 hover:text-slate-800 transition-all focus:outline-none">
+                        Friends
+                    </button>
+                </div>
+
+                <!-- Search Bar -->
+                <div class="relative mt-3">
+                    <input type="text" id="search-input" placeholder="Search people..."
+                           class="w-full pl-12 pr-4 py-2 text-sm bg-slate-100 border-none rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500/20 transition-all" />
+                </div>
+            </div>
+
+            <!-- Scrollable Content -->
+            <div class="flex-1 overflow-y-auto p-2" id="sidebar-list-container">
+                <!-- Conversations List -->
+                <div id="conversations-list" class="space-y-1">
+                    <div class="p-4 text-center text-slate-400 text-sm">Loading conversations...</div>
+                </div>
+
+                <!-- Friends Directory (Hidden by Default) -->
+                <div id="friends-list" class="space-y-1 hidden">
+                    <div class="p-4 text-center text-slate-400 text-sm">Loading friends...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Content: Chat Window -->
+        <div class="hidden flex-1 flex flex-col h-full bg-white relative overflow-hidden" id="chat-window">
+            
+            <!-- Empty State (No Chat Selected) -->
+            <div id="chat-empty-state" class="flex-1 flex flex-col items-center justify-center p-8 text-center bg-slate-50/20">
+                <div class="w-20 h-20 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mb-4 animate-bounce">
+                    <ion-icon name="chatbubbles" class="text-4xl"></ion-icon>
+                </div>
+                <h3 class="text-lg font-bold text-slate-700">Your Conversations</h3>
+                <p class="text-sm text-slate-400 max-w-sm mt-1">Select an active conversation or pick a friend from the directory to start chatting in real time.</p>
+            </div>
+
+            <!-- Chat Active State (Hidden by Default) -->
+            <div id="chat-active-state" class="flex-1 flex flex-col h-full hidden">
+                
+                <!-- Chat Header -->
+                <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-white/80 backdrop-blur z-10">
+                    <div class="flex items-center gap-3">
+                        <button id="chat-back-btn" class="p-1.5 hover:bg-slate-100 text-slate-600 rounded-lg transition-all flex items-center justify-center mr-1">
+                            <ion-icon name="arrow-back-outline" class="text-lg"></ion-icon>
+                        </button>
+                        <div class="relative cursor-pointer">
+                            <img id="chat-user-avatar" src="/images/avatar/user.png" onerror="this.onerror=null; this.src='/images/avatar/user.png';" class="w-10 h-10 rounded-full object-cover border" />
+                            <div class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full"></div>
+                        </div>
+                        <div>
+                            <h2 id="chat-user-fullname" class="text-sm font-bold text-slate-800 leading-tight">Loading...</h2>
+                            <p id="chat-user-username" class="text-xs text-slate-400">active now</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat History Area -->
+                <div class="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50/30" id="chat-messages-box">
+                    <!-- Message Bubbles will be loaded dynamically -->
+                </div>
+
+                <!-- Chat Message Input Footer -->
+                <div class="p-4 border-t border-slate-100 bg-white">
+                    <form id="chat-form" class="flex items-center gap-2" onsubmit="event.preventDefault(); sendMessage();">
+                        <input type="text" id="chat-message-input" autocomplete="off" placeholder="Write a message..." 
+                               class="flex-1 px-4 py-2.5 bg-slate-100 border-none rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500/20 text-sm transition-all focus:outline-none" />
+                        <button type="submit" class="p-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-sm flex items-center justify-center hover:scale-105 active:scale-95 transition-all">
+                            <ion-icon name="send" class="text-lg"></ion-icon>
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</main>
+
+@section Scripts {
+    <script>
+        const currentUserId = "@currentUserId";
+        let activeChatUserId = null;
+        let activeChatUserFullName = "";
+        let activeChatUserAvatar = "";
+        
+        let conversationsData = [];
+        let friendsData = [];
+
+        // Tab Navigation
+        const tabChats = document.getElementById("tab-chats");
+        const tabFriends = document.getElementById("tab-friends");
+        const conversationsList = document.getElementById("conversations-list");
+        const friendsList = document.getElementById("friends-list");
+
+        tabChats.addEventListener("click", () => {
+            tabChats.classList.add("bg-white", "text-slate-800", "shadow-sm");
+            tabChats.classList.remove("text-slate-500");
+            tabFriends.classList.remove("bg-white", "text-slate-800", "shadow-sm");
+            tabFriends.classList.add("text-slate-500");
+            
+            conversationsList.classList.remove("hidden");
+            friendsList.classList.add("hidden");
+        });
+
+        tabFriends.addEventListener("click", () => {
+            tabFriends.classList.add("bg-white", "text-slate-800", "shadow-sm");
+            tabFriends.classList.remove("text-slate-500");
+            tabChats.classList.remove("bg-white", "text-slate-800", "shadow-sm");
+            tabChats.classList.add("text-slate-500");
+            
+            friendsList.classList.remove("hidden");
+            conversationsList.classList.add("hidden");
+        });
+
+        // Search filtering
+        document.getElementById("search-input").addEventListener("input", (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            
+            // Filter conversations
+            const convItems = conversationsList.querySelectorAll(".conversation-item");
+            convItems.forEach(item => {
+                const name = item.querySelector(".conv-name").textContent.toLowerCase();
+                if (name.includes(query)) {
+                    item.classList.remove("hidden");
+                } else {
+                    item.classList.add("hidden");
+                }
+            });
+
+            // Filter friends
+            const friendItems = friendsList.querySelectorAll(".friend-item");
+            friendItems.forEach(item => {
+                const name = item.querySelector(".friend-name").textContent.toLowerCase();
+                if (name.includes(query)) {
+                    item.classList.remove("hidden");
+                } else {
+                    item.classList.add("hidden");
+                }
+            });
+        });
+
+        // Load Active Conversations
+        function loadConversations() {
+            fetch("/messages/conversations")
+                .then(res => res.json())
+                .then(data => {
+                    conversationsData = data;
+                    renderConversations();
+                })
+                .catch(err => console.error("Error loading conversations: ", err));
+        }
+
+        // Render Conversations to Sidebar
+        function renderConversations() {
+            if (conversationsData.length === 0) {
+                conversationsList.innerHTML = `<div class="p-8 text-center text-slate-400 text-xs">No active chats. Start one from the Friends tab!</div>`;
+                return;
+            }
+
+            conversationsList.innerHTML = conversationsData.map(c => {
+                const isUnread = !c.isRead && !c.isSender;
+                const isSelected = activeChatUserId === c.conversationWithUserId;
+                const dateText = formatMessageTime(c.sentAt);
+
+                return `
+                    <div data-user-id="${c.conversationWithUserId}" 
+                         data-fullname="${escapeHtml(c.fullName)}" 
+                         data-avatar="${c.avatarUrl}"
+                         class="conversation-item flex items-center gap-3 p-3 rounded-xl cursor-pointer hover:bg-slate-100 transition-all ${isSelected ? 'bg-blue-50/60 hover:bg-blue-50/80 border-l-4 border-blue-600 pl-2' : ''}">
+                        <div class="relative shrink-0 pointer-events-none" style="width: 40px; height: 40px; min-width: 40px; min-height: 40px;">
+                            <img src="${c.avatarUrl}" onerror="this.onerror=null; this.src='/images/avatar/user.png';" class="w-10 h-10 rounded-full object-cover border border-slate-100" style="width: 40px; height: 40px; min-width: 40px; min-height: 40px; object-fit: cover; border-radius: 50%;" />
+                            <div class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border border-white rounded-full"></div>
+                        </div>
+                        <div class="flex-1 min-w-0 pointer-events-none">
+                            <div class="flex items-center justify-between">
+                                <span class="conv-name text-xs font-bold text-slate-800 truncate ${isUnread ? 'text-black font-extrabold' : ''}">${c.fullName}</span>
+                                <span class="text-[10px] text-slate-400 shrink-0">${dateText}</span>
+                            </div>
+                            <p class="text-xs text-slate-400 truncate mt-0.5 ${isUnread ? 'text-slate-800 font-semibold' : ''}">
+                                ${c.isSender ? 'You: ' : ''}${c.lastMessage}
+                            </p>
+                        </div>
+                        ${isUnread ? '<div class="w-2.5 h-2.5 bg-blue-600 rounded-full shrink-0 pointer-events-none"></div>' : ''}
+                    </div>
+                `;
+            }).join("");
+        }
+
+        // Load Friends list
+        function loadFriends() {
+            fetch("/messages/friends")
+                .then(res => res.json())
+                .then(data => {
+                    friendsData = data;
+                    renderFriends();
+                })
+                .catch(err => console.error("Error loading friends: ", err));
+        }
+
+        // Render Friends List
+        function renderFriends() {
+            if (friendsData.length === 0) {
+                friendsList.innerHTML = `<div class="p-8 text-center text-slate-400 text-xs">You don't have any friends yet! Add some from the Friends tab.</div>`;
+                return;
+            }
+
+            friendsList.innerHTML = friendsData.map(f => {
+                return `
+                    <div data-user-id="${f.id}" 
+                         data-fullname="${escapeHtml(f.fullName)}" 
+                         data-avatar="${f.avatarUrl}"
+                         class="friend-item flex items-center gap-3 p-3 rounded-xl cursor-pointer hover:bg-slate-100 transition-all">
+                        <img src="${f.avatarUrl}" onerror="this.onerror=null; this.src='/images/avatar/user.png';" class="w-10 h-10 rounded-full object-cover border pointer-events-none" style="width: 40px; height: 40px; min-width: 40px; min-height: 40px; object-fit: cover; border-radius: 50%;" />
+                        <div class="flex-1 min-w-0 pointer-events-none">
+                            <span class="friend-name text-xs font-bold text-slate-800 truncate block">${f.fullName}</span>
+                            <span class="text-[10px] text-slate-400 block">&#64;${f.userName}</span>
+                        </div>
+                        <span class="p-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg text-xs font-medium transition-all select-none pointer-events-none">
+                            Chat
+                        </span>
+                    </div>
+                `;
+            }).join("")
+        }
+
+        // Select a conversation partner
+        function selectUser(userId, fullName, avatarUrl) {
+            activeChatUserId = userId;
+            activeChatUserFullName = fullName;
+            activeChatUserAvatar = avatarUrl;
+
+            // Update Active UI State
+            document.getElementById("chat-empty-state").classList.add("hidden");
+            document.getElementById("chat-active-state").classList.remove("hidden");
+
+            // Header info
+            document.getElementById("chat-user-avatar").src = avatarUrl;
+            document.getElementById("chat-user-fullname").innerText = fullName;
+            document.getElementById("chat-user-username").innerText = `online`;
+
+            // Toggle view: show chat window, hide sidebar
+            document.getElementById("chat-sidebar").classList.add("hidden");
+            document.getElementById("chat-window").classList.remove("hidden");
+
+            // Load Message History
+            fetchMessageHistory(userId);
+
+            // Re-render recent list so active selection is visually highlighted
+            renderConversations();
+        }
+
+        // Fetch Messages Logs from Backend
+        function fetchMessageHistory(otherUserId) {
+            fetch(`/messages/history?otherUserId=${otherUserId}`)
+                .then(res => res.json())
+                .then(messages => {
+                    renderMessages(messages);
+                    scrollToBottom();
+                })
+                .catch(err => console.error("Error loading messages: ", err));
+        }
+
+        // Render Bubble Log
+        function renderMessages(messages) {
+            const msgBox = document.getElementById("chat-messages-box");
+            if (messages.length === 0) {
+                msgBox.innerHTML = `<div class="h-full flex flex-col items-center justify-center p-8 text-center">
+                    <ion-icon name="chatbox-outline" class="text-3xl text-slate-300 mb-2"></ion-icon>
+                    <p class="text-xs text-slate-400">Say hello! There are no messages here yet.</p>
+                </div>`;
+                return;
+            }
+
+            let html = "";
+            let lastDate = "";
+
+            messages.forEach(m => {
+                const isSentByMe = m.senderId === currentUserId;
+                const timeString = new Date(m.sentAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const messageDate = new Date(m.sentAt).toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' });
+
+                if (messageDate !== lastDate) {
+                    html += `<div class="flex items-center justify-center my-4">
+                        <span class="px-3 py-1 bg-slate-100 rounded-full text-[10px] text-slate-400 font-medium">${messageDate}</span>
+                    </div>`;
+                    lastDate = messageDate;
+                }
+
+                if (isSentByMe) {
+                    html += `
+                        <div class="flex items-end justify-end gap-2 pl-12 animate-fade-in">
+                            <div class="flex flex-col items-end">
+                                <div class="px-4 py-2.5 bg-blue-600 text-white rounded-2xl rounded-tr-none text-sm max-w-md shadow-sm">
+                                    ${escapeHtml(m.content)}
+                                </div>
+                                <span class="text-[9px] text-slate-400 mt-1">${timeString}</span>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    html += `
+                        <div class="flex items-end gap-2 pr-12 animate-fade-in">
+                            <img src="${activeChatUserAvatar}" onerror="this.onerror=null; this.src='/images/avatar/user.png';" class="w-8 h-8 rounded-full object-cover shrink-0 border shadow-sm" />
+                            <div class="flex flex-col">
+                                <div class="px-4 py-2.5 bg-slate-200 text-slate-800 rounded-2xl rounded-tl-none text-sm max-w-md">
+                                    ${escapeHtml(m.content)}
+                                </div>
+                                <span class="text-[9px] text-slate-400 mt-1">${timeString}</span>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            msgBox.innerHTML = html;
+        }
+
+        // Send a message
+        function sendMessage() {
+            const input = document.getElementById("chat-message-input");
+            const text = input.value.trim();
+            if (!text || !activeChatUserId) return;
+
+            input.value = "";
+            
+            const payload = {
+                receiverId: activeChatUserId,
+                content: text
+            };
+
+            fetch("/messages/send", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(message => {
+                // Real-time SignalR hub will broadcast, so we let the hub handler append the message
+                // This keeps our data and state absolutely synchronized.
+            })
+            .catch(err => {
+                console.error("Error sending message: ", err);
+                UIkit.notification({ message: "Failed to send message", status: "danger" });
+            });
+        }
+
+        // Scroll to bottom of ChatBox
+        function scrollToBottom() {
+            const msgBox = document.getElementById("chat-messages-box");
+            msgBox.scrollTop = msgBox.scrollHeight;
+        }
+
+        // Helpers
+        function formatMessageTime(sentAt) {
+            const date = new Date(sentAt);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            
+            if (diffMins < 1) return "Just now";
+            if (diffMins < 60) return `${diffMins}m ago`;
+            
+            const diffHours = Math.floor(diffMins / 60);
+            if (diffHours < 24) return `${diffHours}h ago`;
+            
+            return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
+        }
+
+        function escapeHtml(text) {
+            if (!text) return "";
+            return String(text)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // Start SignalR Listener specific to chat page
+        document.addEventListener("DOMContentLoaded", () => {
+            loadConversations();
+            loadFriends();
+
+            // Back button handling
+            const backBtn = document.getElementById("chat-back-btn");
+            if (backBtn) {
+                backBtn.addEventListener("click", () => {
+                    document.getElementById("chat-sidebar").classList.remove("hidden");
+                    document.getElementById("chat-window").classList.add("hidden");
+                    activeChatUserId = null;
+                });
+            }
+
+            // Event delegation for conversations list
+            conversationsList.addEventListener("click", (e) => {
+                const item = e.target.closest(".conversation-item");
+                if (item) {
+                    const userId = item.getAttribute("data-user-id");
+                    const fullName = item.getAttribute("data-fullname");
+                    const avatarUrl = item.getAttribute("data-avatar");
+                    selectUser(userId, fullName, avatarUrl);
+                }
+            });
+
+            // Event delegation for friends list
+            friendsList.addEventListener("click", (e) => {
+                const item = e.target.closest(".friend-item");
+                if (item) {
+                    const userId = item.getAttribute("data-user-id");
+                    const fullName = item.getAttribute("data-fullname");
+                    const avatarUrl = item.getAttribute("data-avatar");
+                    console.log("Clicked:", userId); // th�m d�ng n�y
+                    selectUser(userId, fullName, avatarUrl);
+                }
+            });
+
+            // Check if there is a pre-selected user ID to open chat with
+            const urlUserId = "@ViewBag.SelectedUserId";
+            if (urlUserId && urlUserId !== "") {
+                // Find user info in friends list or fetch details if needed
+                // For simplicity, fetch friends list first, then open chat
+                fetch("/messages/friends")
+                    .then(res => res.json())
+                    .then(friends => {
+                        const preFriend = friends.find(f => f.id === urlUserId);
+                        if (preFriend) {
+                            selectUser(preFriend.id, preFriend.fullName, preFriend.avatarUrl);
+                        }
+                    });
+            }
+
+            // Real-time Chat connection setup
+            const chatHubConn = new signalR.HubConnectionBuilder()
+                .withUrl("/chatHub")
+                .withAutomaticReconnect()
+                .build();
+
+            chatHubConn.on("ReceiveMessage", (message) => {
+                console.log("Chat message received: ", message);
+                
+                // If it is in the active chat, append bubble immediately
+                if (activeChatUserId && (message.senderId === activeChatUserId || message.receiverId === activeChatUserId)) {
+                    appendMessageBubble(message);
+                    scrollToBottom();
+                    
+                    // Mark as read in DB if it was a received message
+                    if (message.senderId === activeChatUserId) {
+                        fetch(`/messages/history?otherUserId=${activeChatUserId}`).catch(() => {});
+                    }
+                }
+                
+                // Always reload/update recent conversation list to show new preview and timestamp
+                loadConversations();
+            });
+
+            chatHubConn.start()
+                .then(() => console.log("Connected to ChatHub inside Messages page."))
+                .catch(err => console.error("Error connecting to ChatHub: ", err));
+        });
+
+        // Dynamically append single message bubble
+        function appendMessageBubble(m) {
+            const msgBox = document.getElementById("chat-messages-box");
+            
+            // Remove empty logs state if present
+            const emptyEl = msgBox.querySelector(".text-slate-300");
+            if (emptyEl) msgBox.innerHTML = "";
+
+            const isSentByMe = m.senderId === currentUserId;
+            const timeString = new Date(m.sentAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            let bubbleHtml = "";
+            if (isSentByMe) {
+                bubbleHtml = `
+                    <div class="flex items-end justify-end gap-2 pl-12 animate-fade-in">
+                        <div class="flex flex-col items-end">
+                            <div class="px-4 py-2.5 bg-blue-600 text-white rounded-2xl rounded-tr-none text-sm max-w-md shadow-sm">
+                                ${escapeHtml(m.content)}
+                            </div>
+                            <span class="text-[9px] text-slate-400 mt-1">${timeString}</span>
+                        </div>
+                    </div>
+                `;
+            } else {
+                bubbleHtml = `
+                    <div class="flex items-end gap-2 pr-12 animate-fade-in">
+                        <img src="${activeChatUserAvatar}" onerror="this.onerror=null; this.src='/images/avatar/user.png';" class="w-8 h-8 rounded-full object-cover shrink-0 border shadow-sm" />
+                        <div class="flex flex-col">
+                            <div class="px-4 py-2.5 bg-slate-200 text-slate-800 rounded-2xl rounded-tl-none text-sm max-w-md">
+                                ${escapeHtml(m.content)}
+                            </div>
+                            <span class="text-[9px] text-slate-400 mt-1">${timeString}</span>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            msgBox.insertAdjacentHTML('beforeend', bubbleHtml);
+        }
+    </script>
+    
+    <style>
+        @@keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.2s ease-out forwards;
+        }
+    </style>
+}

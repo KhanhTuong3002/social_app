@@ -1,4 +1,4 @@
-﻿﻿<div id="site__sidebar" class="fixed top-0 left-0 z-[99] pt-[--m-top] overflow-hidden transition-transform xl:duration-500 max-xl:w-full max-xl:-translate-x-full">
+﻿<div id="site__sidebar" class="fixed top-0 left-0 z-[99] pt-[--m-top] overflow-hidden transition-transform xl:duration-500 max-xl:w-full max-xl:-translate-x-full">
     <div class="p-2 max-xl:bg-white shadow-sm 2xl:w-72 sm:w-64 w-[80%] h-[calc(100vh-64px)] relative z-30 max-lg:border-r dark:max-xl:!bg-slate-700 dark:border-slate-700">
 
         <div class="pr-4" data-simplebar>
@@ -20,6 +20,14 @@
                         <a asp-controller="Friends" asp-action="Index">
                             <img src="~/images/icons/group-2.png" class="w-6" />
                             <span> Friends </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a asp-controller="Messages" asp-action="Index">
+                            <div class="flex items-center justify-center w-6 text-xl text-blue-500">
+                                <ion-icon name="chatbubble-ellipses-outline" class="text-xl"></ion-icon>
+                            </div>
+                            <span class="ml-1"> Messages </span>
                         </a>
                     </li>
                 </ul>

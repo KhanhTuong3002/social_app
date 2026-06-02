@@ -12,7 +12,7 @@
   -Simplebar
 
 */
-@import "tailwindcss";
+@import "tailwind.css";
 
 [hidden] {
   display: none !important;
