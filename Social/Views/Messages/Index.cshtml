@@ -446,16 +446,16 @@
             // Check if there is a pre-selected user ID to open chat with
             const urlUserId = "@ViewBag.SelectedUserId";
             if (urlUserId && urlUserId !== "") {
-                // Find user info in friends list or fetch details if needed
-                // For simplicity, fetch friends list first, then open chat
-                fetch("/messages/friends")
-                    .then(res => res.json())
-                    .then(friends => {
-                        const preFriend = friends.find(f => f.id === urlUserId);
-                        if (preFriend) {
-                            selectUser(preFriend.id, preFriend.fullName, preFriend.avatarUrl);
-                        }
-                    });
+                // Fetch basic user details from the backend and open chat directly
+                fetch(`/messages/user/${urlUserId}`)
+                    .then(res => {
+                        if (!res.ok) throw new Error("User not found");
+                        return res.json();
+                    })
+                    .then(user => {
+                        selectUser(user.id, user.fullName, user.avatarUrl);
+                    })
+                    .catch(err => console.error("Error loading pre-selected user: ", err));
             }
 
             // Real-time Chat connection setup

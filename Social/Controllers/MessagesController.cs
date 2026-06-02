@@ -35,6 +35,20 @@ namespace Social_App.Controllers
             return View();
         }
 
+        [HttpGet("messages/user/{userId}")]
+        public async Task<IActionResult> GetUserBasicInfo(string userId)
+        {
+            var user = await _sociaDbContext.Users.FindAsync(userId);
+            if (user == null) return NotFound("User not found");
+            return Ok(new
+            {
+                Id = user.Id,
+                FullName = user.FullName,
+                AvatarUrl = string.IsNullOrEmpty(user.AvatarUrl) ? "/images/avatar/user.png" : user.AvatarUrl,
+                UserName = user.UserName
+            });
+        }
+
         [HttpGet("messages/history")]
         public async Task<IActionResult> GetMessageHistory(string otherUserId)
         {
