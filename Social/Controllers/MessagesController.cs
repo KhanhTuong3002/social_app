@@ -101,6 +101,9 @@ namespace Social_App.Controllers
                 // Broadcast updated unread notification count
                 var notificationNumber = await _notificationService.GetUnreadNotificationCountAsync(userId);
                 await _notificationHubContext.Clients.User(userId).SendAsync("ReceiveNotification", notificationNumber);
+
+                // Broadcast to the sender that their messages have been read
+                await _chatHubContext.Clients.User(otherUserId).SendAsync("MessagesRead", userId);
             }
 
             return Ok(messages);
