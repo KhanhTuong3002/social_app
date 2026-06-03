@@ -1,4 +1,4 @@
-﻿@using System.Security.Claims
+@using System.Security.Claims
 @using DataAccess
 @model Post
 @{
@@ -28,7 +28,7 @@
 
 }
 
-<div id="post-@Model.PostId" class="bg-white rounded-xl shadow-sm text-sm font-medium border1">
+<div id="post-@Model.PostId" class="bg-white dark:bg-slate-900 rounded-xl shadow-sm text-sm font-medium border1 dark:border-slate-800">
 
     @* Post heading *@
     <div class="flex gap-3 sm:p-4 p-2.5 text-sm font-medium">
@@ -38,7 +38,7 @@
         </a>
         <div class="flex-1">
             <a asp-controller="Users" asp-action="Details" asp-route-userid="@Model.UserId">
-                <h4 class="text-black">@Model.user.FullName</h4>
+                <h4 class="text-black dark:text-white">@Model.user.FullName</h4>
                 <div class="text-xs text-gray-500/80" title="@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")">@displayTime</div>
             </a>
         </div>
@@ -81,7 +81,7 @@
     @* Post content *@
     <a asp-controller="Home" asp-action="Details" asp-route-postId="@Model.PostId">
         <div class="sm:px-4 p-2.5 pt-0 w-full">
-            <p class="font-normal">
+            <p class="font-normal text-slate-800 dark:text-slate-100">
                 @Model.Content
             </p>
         </div>
@@ -144,7 +144,7 @@
     @* Add comment section *@
     <div>
 
-        <div class="p-2.5 border-t border-gray-100 font-normal space-y-3 relative">
+        <div class="p-2.5 border-t border-gray-100 dark:border-slate-800 font-normal space-y-3 relative">
             @foreach (var comment in showAllComments
             ? Model.Comments.OrderByDescending(n => n.CreatedAt)
             : Model.Comments.OrderByDescending(n => n.CreatedAt).Take(2))
@@ -165,7 +165,7 @@
                     <div class="flex-1">
                         <div class="flex justify-content-between">
                             <a asp-controller="Users" asp-action="Details" asp-route-userid="@comment.UserId"
-                               class="text-black font-medium inline-block flex-grow">
+                               class="text-black dark:text-white font-medium inline-block flex-grow">
                                 @comment.User.FullName
                             </a>
                             <small>
@@ -173,7 +173,7 @@
                             </small>
                         </div>
                         <div class="flex items-center justify-between">
-                            <p class="mt-0.5">
+                            <p class="mt-0.5 text-slate-800 dark:text-slate-200">
                                 @comment.Content
                             </p>
                             <form asp-controller="Home" asp-action="RemovePostComment" class="remove-comments-form">
@@ -202,7 +202,7 @@
 
         <form asp-controller="Home" asp-action="AddPostComment" class="add-comment-form">
             @Html.AntiForgeryToken()
-            <div class="sm:px-4 sm:py-3 p-2.5 border-t border-gray-100 flex items-center gap-1">
+            <div class="sm:px-4 sm:py-3 p-2.5 border-t border-gray-100 dark:border-slate-800 flex items-center gap-1">
                 <a asp-controller="Users" asp-action="Details" asp-route-userid="@Model.UserId">
                     <img src="@currentAvatarPath" class="w-6 h-6 rounded-full" />
                 </a>
@@ -212,10 +212,10 @@
                     <textarea name="content" placeholder="Add Comment...."
                               rows="1"
                               class="w-full resize-none !bg-transparent px-4 py-2 focus:!border-transparent
-                              focus:!ring-transparent"></textarea>
+                              focus:!ring-transparent text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500"></textarea>
                 </div>
 
-                <button type="submit" class="text-sm rounded-full py-1.5 px-3.5 bg-secondery">Comment</button>
+                <button type="submit" class="text-sm rounded-full py-1.5 px-3.5 bg-secondery dark:bg-slate-800 dark:text-white">Comment</button>
             </div>
         </form>
     </div>

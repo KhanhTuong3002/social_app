@@ -6,23 +6,23 @@
     var currentUserId = loggedInUser?.Id;
 }
 
-<main id="site__main" class="2xl:ml-[--w-side] xl:ml-[--w-side-sm] h-[calc(100vh-var(--m-top))] mt-[--m-top] p-4 bg-slate-50 flex overflow-hidden">
-    <div class="flex flex-col md:flex-row w-full max-w-[1200px] mx-auto bg-white rounded-2xl shadow-sm border border-slate-200 h-full overflow-hidden">
+<main id="site__main" class="2xl:ml-[--w-side] xl:ml-[--w-side-sm] h-[calc(100vh-var(--m-top))] mt-[--m-top] p-4 bg-slate-50 dark:bg-slate-950 flex overflow-hidden">
+    <div class="flex flex-col md:flex-row w-full max-w-[1200px] mx-auto bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 h-full overflow-hidden">
         
         <!-- Left Sidebar: Conversations & Friends -->
-        <div id="chat-sidebar" class="w-full md:w-80 lg:w-96 flex flex-col border-r border-slate-100 h-full overflow-hidden bg-slate-50/50">
+        <div id="chat-sidebar" class="w-full md:w-80 lg:w-96 flex flex-col border-r border-slate-100 dark:border-slate-800 h-full overflow-hidden bg-slate-50/50 dark:bg-slate-950/20">
             <!-- Sidebar Header -->
-            <div class="p-4 border-b border-slate-100 bg-white">
+            <div class="p-4 border-b border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900">
                 <div class="flex items-center justify-between mb-3">
-                    <h1 class="text-xl font-bold text-slate-800">Messages</h1>
+                    <h1 class="text-xl font-bold text-slate-800 dark:text-white">Messages</h1>
                 </div>
                 
                 <!-- Custom Tabs -->
-                <div class="flex bg-slate-100 p-1 rounded-xl">
-                    <button id="tab-chats" class="flex-1 py-1.5 text-xs font-semibold rounded-lg bg-white text-slate-800 shadow-sm transition-all focus:outline-none">
+                <div class="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
+                    <button id="tab-chats" class="flex-1 py-1.5 text-xs font-semibold rounded-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow-sm transition-all focus:outline-none">
                         Chats
                     </button>
-                    <button id="tab-friends" class="flex-1 py-1.5 text-xs font-semibold rounded-lg text-slate-500 hover:text-slate-800 transition-all focus:outline-none">
+                    <button id="tab-friends" class="flex-1 py-1.5 text-xs font-semibold rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white transition-all focus:outline-none">
                         Friends
                     </button>
                 </div>
@@ -30,7 +30,7 @@
                 <!-- Search Bar -->
                 <div class="relative mt-3">
                     <input type="text" id="search-input" placeholder="Search people..."
-                           class="w-full pl-12 pr-4 py-2 text-sm bg-slate-100 border-none rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500/20 transition-all" />
+                           class="w-full pl-12 pr-4 py-2 text-sm bg-slate-100 dark:bg-slate-800 border-none rounded-xl text-slate-800 dark:text-slate-100 focus:bg-white dark:focus:bg-slate-700 focus:ring-2 focus:ring-blue-500/20 transition-all" />
                 </div>
             </div>
 
@@ -49,14 +49,14 @@
         </div>
 
         <!-- Right Content: Chat Window -->
-        <div class="hidden flex-1 flex flex-col h-full bg-white relative overflow-hidden" id="chat-window">
+        <div class="hidden flex-1 flex flex-col h-full bg-white dark:bg-slate-900 relative overflow-hidden" id="chat-window">
             
             <!-- Empty State (No Chat Selected) -->
-            <div id="chat-empty-state" class="flex-1 flex flex-col items-center justify-center p-8 text-center bg-slate-50/20">
-                <div class="w-20 h-20 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mb-4 animate-bounce">
+            <div id="chat-empty-state" class="flex-1 flex flex-col items-center justify-center p-8 text-center bg-slate-50/20 dark:bg-slate-950/20">
+                <div class="w-20 h-20 bg-blue-50 dark:bg-blue-950/50 text-blue-500 dark:text-blue-400 rounded-full flex items-center justify-center mb-4 animate-bounce">
                     <ion-icon name="chatbubbles" class="text-4xl"></ion-icon>
                 </div>
-                <h3 class="text-lg font-bold text-slate-700">Your Conversations</h3>
+                <h3 class="text-lg font-bold text-slate-700 dark:text-slate-200">Your Conversations</h3>
                 <p class="text-sm text-slate-400 max-w-sm mt-1">Select an active conversation or pick a friend from the directory to start chatting in real time.</p>
             </div>
 
@@ -64,32 +64,32 @@
             <div id="chat-active-state" class="flex-1 flex flex-col h-full hidden">
                 
                 <!-- Chat Header -->
-                <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-white/80 backdrop-blur z-10">
+                <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-white/80 dark:bg-slate-900/80 backdrop-blur z-10">
                     <div class="flex items-center gap-3">
-                        <button id="chat-back-btn" class="p-1.5 hover:bg-slate-100 text-slate-600 rounded-lg transition-all flex items-center justify-center mr-1">
+                        <button id="chat-back-btn" class="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-lg transition-all flex items-center justify-center mr-1">
                             <ion-icon name="arrow-back-outline" class="text-lg"></ion-icon>
                         </button>
                         <div class="relative cursor-pointer">
-                            <img id="chat-user-avatar" src="/images/avatar/user.png" onerror="this.onerror=null; this.src='/images/avatar/user.png';" class="w-10 h-10 rounded-full object-cover border" />
-                            <div class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full"></div>
+                            <img id="chat-user-avatar" src="/images/avatar/user.png" onerror="this.onerror=null; this.src='/images/avatar/user.png';" class="w-10 h-10 rounded-full object-cover border dark:border-slate-800" />
+                            <div class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white dark:border-slate-900 rounded-full"></div>
                         </div>
                         <div>
-                            <h2 id="chat-user-fullname" class="text-sm font-bold text-slate-800 leading-tight">Loading...</h2>
+                            <h2 id="chat-user-fullname" class="text-sm font-bold text-slate-800 dark:text-white leading-tight">Loading...</h2>
                             <p id="chat-user-username" class="text-xs text-slate-400">active now</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Chat History Area -->
-                <div class="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50/30" id="chat-messages-box">
+                <div class="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50/30 dark:bg-slate-950/10" id="chat-messages-box">
                     <!-- Message Bubbles will be loaded dynamically -->
                 </div>
 
                 <!-- Chat Message Input Footer -->
-                <div class="p-4 border-t border-slate-100 bg-white">
+                <div class="p-4 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900">
                     <form id="chat-form" class="flex items-center gap-2" onsubmit="event.preventDefault(); sendMessage();">
                         <input type="text" id="chat-message-input" autocomplete="off" placeholder="Write a message..." 
-                               class="flex-1 px-4 py-2.5 bg-slate-100 border-none rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500/20 text-sm transition-all focus:outline-none" />
+                               class="flex-1 px-4 py-2.5 bg-slate-100 dark:bg-slate-800 border-none rounded-xl text-slate-800 dark:text-slate-100 focus:bg-white dark:focus:bg-slate-700 focus:ring-2 focus:ring-blue-500/20 text-sm transition-all focus:outline-none" />
                         <button type="submit" class="p-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-sm flex items-center justify-center hover:scale-105 active:scale-95 transition-all">
                             <ion-icon name="send" class="text-lg"></ion-icon>
                         </button>
@@ -130,20 +130,20 @@
         const friendsList = document.getElementById("friends-list");
 
         tabChats.addEventListener("click", () => {
-            tabChats.classList.add("bg-white", "text-slate-800", "shadow-sm");
-            tabChats.classList.remove("text-slate-500");
-            tabFriends.classList.remove("bg-white", "text-slate-800", "shadow-sm");
-            tabFriends.classList.add("text-slate-500");
+            tabChats.classList.add("bg-white", "dark:bg-slate-700", "text-slate-800", "dark:text-white", "shadow-sm");
+            tabChats.classList.remove("text-slate-500", "dark:text-slate-400");
+            tabFriends.classList.remove("bg-white", "dark:bg-slate-700", "text-slate-800", "dark:text-white", "shadow-sm");
+            tabFriends.classList.add("text-slate-500", "dark:text-slate-400");
             
             conversationsList.classList.remove("hidden");
             friendsList.classList.add("hidden");
         });
 
         tabFriends.addEventListener("click", () => {
-            tabFriends.classList.add("bg-white", "text-slate-800", "shadow-sm");
-            tabFriends.classList.remove("text-slate-500");
-            tabChats.classList.remove("bg-white", "text-slate-800", "shadow-sm");
-            tabChats.classList.add("text-slate-500");
+            tabFriends.classList.add("bg-white", "dark:bg-slate-700", "text-slate-800", "dark:text-white", "shadow-sm");
+            tabFriends.classList.remove("text-slate-500", "dark:text-slate-400");
+            tabChats.classList.remove("bg-white", "dark:bg-slate-700", "text-slate-800", "dark:text-white", "shadow-sm");
+            tabChats.classList.add("text-slate-500", "dark:text-slate-400");
             
             friendsList.classList.remove("hidden");
             conversationsList.classList.add("hidden");
@@ -203,17 +203,17 @@
                     <div data-user-id="${c.conversationWithUserId}" 
                          data-fullname="${escapeHtml(c.fullName)}" 
                          data-avatar="${c.avatarUrl}"
-                         class="conversation-item flex items-center gap-3 p-3 rounded-xl cursor-pointer hover:bg-slate-100 transition-all ${isSelected ? 'bg-blue-50/60 hover:bg-blue-50/80 border-l-4 border-blue-600 pl-2' : ''}">
+                         class="conversation-item flex items-center gap-3 p-3 rounded-xl cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-all ${isSelected ? 'bg-blue-50/60 dark:bg-blue-950/40 hover:bg-blue-50/80 dark:hover:bg-blue-950/60 border-l-4 border-blue-600 pl-2' : ''}">
                         <div class="relative shrink-0 pointer-events-none" style="width: 40px; height: 40px; min-width: 40px; min-height: 40px;">
-                            <img src="${c.avatarUrl}" onerror="this.onerror=null; this.src='/images/avatar/user.png';" class="w-10 h-10 rounded-full object-cover border border-slate-100" style="width: 40px; height: 40px; min-width: 40px; min-height: 40px; object-fit: cover; border-radius: 50%;" />
-                            <div class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border border-white rounded-full"></div>
+                            <img src="${c.avatarUrl}" onerror="this.onerror=null; this.src='/images/avatar/user.png';" class="w-10 h-10 rounded-full object-cover border border-slate-100 dark:border-slate-800" style="width: 40px; height: 40px; min-width: 40px; min-height: 40px; object-fit: cover; border-radius: 50%;" />
+                            <div class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border border-white dark:border-slate-900 rounded-full"></div>
                         </div>
                         <div class="flex-1 min-w-0 pointer-events-none">
                             <div class="flex items-center justify-between">
-                                <span class="conv-name text-xs font-bold text-slate-800 truncate ${isUnread ? 'text-black font-extrabold' : ''}">${c.fullName}</span>
-                                <span class="text-[10px] text-slate-400 shrink-0">${dateText}</span>
+                                <span class="conv-name text-xs font-bold text-slate-800 dark:text-slate-200 truncate ${isUnread ? 'text-black dark:text-white font-extrabold' : ''}">${c.fullName}</span>
+                                <span class="text-[10px] text-slate-400 dark:text-slate-500 shrink-0">${dateText}</span>
                             </div>
-                            <p class="text-xs text-slate-400 truncate mt-0.5 ${isUnread ? 'text-slate-800 font-semibold' : ''}">
+                            <p class="text-xs text-slate-400 dark:text-slate-500 truncate mt-0.5 ${isUnread ? 'text-slate-800 dark:text-slate-200 font-semibold' : ''}">
                                 ${c.isSender ? 'You: ' : ''}${c.lastMessage}
                             </p>
                         </div>
@@ -246,13 +246,13 @@
                     <div data-user-id="${f.id}" 
                          data-fullname="${escapeHtml(f.fullName)}" 
                          data-avatar="${f.avatarUrl}"
-                         class="friend-item flex items-center gap-3 p-3 rounded-xl cursor-pointer hover:bg-slate-100 transition-all">
-                        <img src="${f.avatarUrl}" onerror="this.onerror=null; this.src='/images/avatar/user.png';" class="w-10 h-10 rounded-full object-cover border pointer-events-none" style="width: 40px; height: 40px; min-width: 40px; min-height: 40px; object-fit: cover; border-radius: 50%;" />
+                         class="friend-item flex items-center gap-3 p-3 rounded-xl cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
+                        <img src="${f.avatarUrl}" onerror="this.onerror=null; this.src='/images/avatar/user.png';" class="w-10 h-10 rounded-full object-cover border dark:border-slate-800 pointer-events-none" style="width: 40px; height: 40px; min-width: 40px; min-height: 40px; object-fit: cover; border-radius: 50%;" />
                         <div class="flex-1 min-w-0 pointer-events-none">
-                            <span class="friend-name text-xs font-bold text-slate-800 truncate block">${f.fullName}</span>
-                            <span class="text-[10px] text-slate-400 block">&#64;${f.userName}</span>
+                            <span class="friend-name text-xs font-bold text-slate-800 dark:text-slate-200 truncate block">${f.fullName}</span>
+                            <span class="text-[10px] text-slate-400 dark:text-slate-500 block">&#64;${f.userName}</span>
                         </div>
-                        <span class="p-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg text-xs font-medium transition-all select-none pointer-events-none">
+                        <span class="p-1.5 bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900/60 text-blue-600 dark:text-blue-400 rounded-lg text-xs font-medium transition-all select-none pointer-events-none">
                             Chat
                         </span>
                     </div>
@@ -318,7 +318,7 @@
 
                 if (messageDate !== lastDate) {
                     html += `<div class="flex items-center justify-center my-4">
-                        <span class="px-3 py-1 bg-slate-100 rounded-full text-[10px] text-slate-400 font-medium">${messageDate}</span>
+                        <span class="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-full text-[10px] text-slate-400 dark:text-slate-400 font-medium">${messageDate}</span>
                     </div>`;
                     lastDate = messageDate;
                 }
@@ -327,12 +327,12 @@
                     html += `
                         <div class="flex items-end justify-end gap-2 pl-12 animate-fade-in">
                             <div class="flex flex-col items-end">
-                                <div class="px-4 py-2.5 bg-blue-600 text-white rounded-2xl rounded-tr-none text-sm max-w-md shadow-sm">
+                                <div class="px-4 py-2.5 bg-blue-600 dark:bg-blue-500 text-white rounded-2xl rounded-tr-none text-sm max-w-md shadow-sm">
                                     ${escapeHtml(m.content)}
                                 </div>
-                                <div class="flex items-center gap-1 mt-1 text-[9px] text-slate-400">
+                                <div class="flex items-center gap-1 mt-1 text-[9px] text-slate-400 dark:text-slate-500">
                                     <span>${timeString}</span>
-                                    <ion-icon name="${m.isRead ? 'checkmark-done-outline' : 'checkmark-outline'}" class="${m.isRead ? 'text-blue-500' : 'text-slate-400'} text-xs"></ion-icon>
+                                    <ion-icon name="${m.isRead ? 'checkmark-done-outline' : 'checkmark-outline'}" class="${m.isRead ? 'text-blue-500 dark:text-blue-400' : 'text-slate-400 dark:text-slate-600'} text-xs"></ion-icon>
                                 </div>
                             </div>
                         </div>
@@ -340,12 +340,12 @@
                 } else {
                     html += `
                         <div class="flex items-end gap-2 pr-12 animate-fade-in">
-                            <img src="${activeChatUserAvatar}" onerror="this.onerror=null; this.src='/images/avatar/user.png';" class="w-8 h-8 rounded-full object-cover shrink-0 border shadow-sm" />
+                            <img src="${activeChatUserAvatar}" onerror="this.onerror=null; this.src='/images/avatar/user.png';" class="w-8 h-8 rounded-full object-cover shrink-0 border dark:border-slate-800 shadow-sm" />
                             <div class="flex flex-col">
-                                <div class="px-4 py-2.5 bg-slate-200 text-slate-800 rounded-2xl rounded-tl-none text-sm max-w-md">
+                                <div class="px-4 py-2.5 bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-100 rounded-2xl rounded-tl-none text-sm max-w-md">
                                     ${escapeHtml(m.content)}
                                 </div>
-                                <span class="text-[9px] text-slate-400 mt-1">${timeString}</span>
+                                <span class="text-[9px] text-slate-400 dark:text-slate-500 mt-1">${timeString}</span>
                             </div>
                         </div>
                     `;
@@ -527,12 +527,12 @@
                 bubbleHtml = `
                     <div class="flex items-end justify-end gap-2 pl-12 animate-fade-in">
                         <div class="flex flex-col items-end">
-                            <div class="px-4 py-2.5 bg-blue-600 text-white rounded-2xl rounded-tr-none text-sm max-w-md shadow-sm">
+                            <div class="px-4 py-2.5 bg-blue-600 dark:bg-blue-500 text-white rounded-2xl rounded-tr-none text-sm max-w-md shadow-sm">
                                 ${escapeHtml(m.content)}
                             </div>
-                            <div class="flex items-center gap-1 mt-1 text-[9px] text-slate-400">
+                            <div class="flex items-center gap-1 mt-1 text-[9px] text-slate-400 dark:text-slate-500">
                                 <span>${timeString}</span>
-                                <ion-icon name="${m.isRead ? 'checkmark-done-outline' : 'checkmark-outline'}" class="${m.isRead ? 'text-blue-500' : 'text-slate-400'} text-xs"></ion-icon>
+                                <ion-icon name="${m.isRead ? 'checkmark-done-outline' : 'checkmark-outline'}" class="${m.isRead ? 'text-blue-500 dark:text-blue-400' : 'text-slate-400 dark:text-slate-600'} text-xs"></ion-icon>
                             </div>
                         </div>
                     </div>
@@ -540,12 +540,12 @@
             } else {
                 bubbleHtml = `
                     <div class="flex items-end gap-2 pr-12 animate-fade-in">
-                        <img src="${activeChatUserAvatar}" onerror="this.onerror=null; this.src='/images/avatar/user.png';" class="w-8 h-8 rounded-full object-cover shrink-0 border shadow-sm" />
+                        <img src="${activeChatUserAvatar}" onerror="this.onerror=null; this.src='/images/avatar/user.png';" class="w-8 h-8 rounded-full object-cover shrink-0 border dark:border-slate-800 shadow-sm" />
                         <div class="flex flex-col">
-                            <div class="px-4 py-2.5 bg-slate-200 text-slate-800 rounded-2xl rounded-tl-none text-sm max-w-md">
+                            <div class="px-4 py-2.5 bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-100 rounded-2xl rounded-tl-none text-sm max-w-md">
                                 ${escapeHtml(m.content)}
                             </div>
-                            <span class="text-[9px] text-slate-400 mt-1">${timeString}</span>
+                            <span class="text-[9px] text-slate-400 dark:text-slate-500 mt-1">${timeString}</span>
                         </div>
                     </div>
                 `;
