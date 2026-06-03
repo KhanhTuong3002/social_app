@@ -1,4 +1,4 @@
-﻿using BussinessObject;
+using BussinessObject;
 using BussinessObject.Entities;
 using DataAccess.Helpers.Constants;
 using DataAccess.Helpers.Enums;
@@ -22,6 +22,7 @@ namespace Social.Controllers
         private readonly IHashtagServices _hashtagServices;
         private readonly IFileServices _fileServices;
         private readonly INotificationService _notificationService;
+        private readonly IHubContext<NotificationHub> _hubContext;
 
 
         public HomeController(ILogger<HomeController> logger, 
@@ -34,6 +35,7 @@ namespace Social.Controllers
             _hashtagServices = hashtagServices;
             _fileServices = fileServices;
             _notificationService = notificationService;
+            _hubContext = hubContext;
         }
 
 
@@ -110,6 +112,9 @@ namespace Social.Controllers
             if (result.SendNotification && loggedInUser != post.UserId)
                 await _notificationService.AddNewNotificationAsync
                     (post.UserId,NotificationType.Like , UserName, postLikeVM.PostId);
+
+            await _hubContext.Clients.All.SendAsync("UpdateLikes", postLikeVM.PostId, post.Likes.Count);
+
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
                 // Là request Ajax => trả về partial
@@ -188,6 +193,9 @@ namespace Social.Controllers
             if (loggedInUser != post.UserId)
                 await _notificationService.AddNewNotificationAsync
                     (post.UserId, NotificationType.Comment, UserName, commentVM.PostId);
+
+            await _hubContext.Clients.All.SendAsync("UpdateComments", commentVM.PostId);
+
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
                 // Là request Ajax => trả về partial
@@ -221,6 +229,9 @@ namespace Social.Controllers
         {
             await _postService.RemovePostCommentAsync(commentVM.CommentId);
             var post = await _postService.GetPostByIdAsync(commentVM.PostId);
+
+            await _hubContext.Clients.All.SendAsync("UpdateComments", commentVM.PostId);
+
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
                 // Là request Ajax => trả về partial
@@ -235,12 +246,21 @@ namespace Social.Controllers
 
         }
 
-            public async Task<IActionResult> PostDelete (PostDeleteVM postDeleteVM)
+        public async Task<IActionResult> PostDelete (PostDeleteVM postDeleteVM)
         {
            var postRemoved = await _postService.RemovePostAsync(postDeleteVM.PostId);
             await _hashtagServices.ProcessHashtagsForRemovePostAsync(postDeleteVM.PostId, postRemoved.Content);
 
             return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetPostComments(string postId, bool showAll = false)
+        {
+            var post = await _postService.GetPostByIdAsync(postId);
+            if (post == null) return NotFound();
+            ViewData["showAllComment"] = showAll;
+            return PartialView("Home/_CommentsList", post);
         }
     }
 

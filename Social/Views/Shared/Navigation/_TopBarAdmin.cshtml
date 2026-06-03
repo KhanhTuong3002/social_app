@@ -136,6 +136,7 @@
         const connection = new signalR.HubConnectionBuilder()
             .withUrl("/notificationHub")
             .build();
+        window.notificationConnection = connection;
 
         connection.on("ReceiveNotification", (message) => {
             console.log("message ==>", message);

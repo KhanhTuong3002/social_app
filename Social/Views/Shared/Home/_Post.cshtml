@@ -115,14 +115,14 @@
                     <ion-icon class="text-lg" name="@(isLiked ? "Heart" :"heart-outline")"></ion-icon>
                 </button>
             </form>
-            <a href="#">@Model.Likes.Count</a>
+            <a href="#" class="like-count">@Model.Likes.Count</a>
         </div>
 
         <div class="flex items-center gap-3">
             <a class="button-icon">
                 <ion-icon class="text-lg" name="chatbubble-ellipses-outline"></ion-icon>
             </a>
-            <a href="#">@Model.Comments.Count</a>
+            <a href="#" class="comment-count">@Model.Comments.Count</a>
         </div>
 
         <div class="ml-auto"></div>
@@ -143,62 +143,7 @@
 
     @* Add comment section *@
     <div>
-
-        <div class="p-2.5 border-t border-gray-100 dark:border-slate-800 font-normal space-y-3 relative">
-            @foreach (var comment in showAllComments
-            ? Model.Comments.OrderByDescending(n => n.CreatedAt)
-            : Model.Comments.OrderByDescending(n => n.CreatedAt).Take(2))
-            {
-                TimeSpan commentTimeSpanSincePosted = DateTime.UtcNow.Subtract(comment.CreatedAt);
-                string commentDisplayTime = commentTimeSpanSincePosted switch
-                {
-                    var t when t.TotalDays >= 1 => $"{(int)t.TotalDays} Day(s) ago",
-                    var t when t.TotalHours >= 1 => $"{(int)t.TotalHours} Hour(s) ago",
-                    var t when t.TotalMinutes >= 1 => $"{(int)t.TotalMinutes} Minute(s) ago",
-                    _ => "Just now"
-                };
-                <div class="flex items-start gap-3 relative">
-                    <a asp-controller="Users" asp-action="Details" asp-route-userid="@comment.UserId">
-                        <img src="@(!string.IsNullOrEmpty(comment.User.AvatarUrl) ?Url.Content
-                        ("~/"+comment.User.AvatarUrl) :defaultAvatarUrl)" class="w-6 h-6 mt-1 rounded-full" />
-                    </a>
-                    <div class="flex-1">
-                        <div class="flex justify-content-between">
-                            <a asp-controller="Users" asp-action="Details" asp-route-userid="@comment.UserId"
-                               class="text-black dark:text-white font-medium inline-block flex-grow">
-                                @comment.User.FullName
-                            </a>
-                            <small>
-                                @commentDisplayTime
-                            </small>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <p class="mt-0.5 text-slate-800 dark:text-slate-200">
-                                @comment.Content
-                            </p>
-                            <form asp-controller="Home" asp-action="RemovePostComment" class="remove-comments-form">
-                                @Html.AntiForgeryToken()
-                                <input type="hidden" name="commentId" value="@comment.CommentId" />
-                                <input type="hidden" name="postId" value="@comment.PostId" />
-                                <button type="submit" class="text-red-500 text-xs ml-2" title="Remove post comment">
-                                    <ion-icon name="trash-outline"></ion-icon>
-                                </button>
-
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            }
-            @if (Model.Comments.Count >= 3 && !showAllComments)
-            {
-                <div class="p-1.5">
-                    <a asp-controller="Home" asp-action="Details" asp-route-postId="@Model.PostId">
-                        Show more comments....
-                    </a>
-
-                </div>
-            }
-        </div>
+        <partial name="Home/_CommentsList" model="Model" view-data="ViewData" />
 
         <form asp-controller="Home" asp-action="AddPostComment" class="add-comment-form">
             @Html.AntiForgeryToken()
