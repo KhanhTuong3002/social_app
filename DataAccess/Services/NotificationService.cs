@@ -1,4 +1,4 @@
-﻿using BussinessObject.Entities;
+using BussinessObject.Entities;
 using DataAccess.Helpers.Constants;
 using DataAccess.Hubs;
 using Microsoft.AspNetCore.SignalR;
@@ -96,6 +96,9 @@ namespace DataAccess.Services
                     break;
                 case NotificationType.FriendRequestAprroved:
                     message = $"{userfullname} accepted your friend request";
+                    break;
+                case NotificationType.Message:
+                    message = $"{userfullname} sent you a message";
                     break;
                 default:
                     message = "";

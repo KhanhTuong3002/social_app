@@ -17,16 +17,22 @@ namespace Social_App.Controllers
     {
         private readonly SociaDbContex _sociaDbContext;
         private readonly IHubContext<ChatHub> _chatHubContext;
+        private readonly IHubContext<NotificationHub> _notificationHubContext;
         private readonly IFriendService _friendService;
+        private readonly INotificationService _notificationService;
 
         public MessagesController(
             SociaDbContex sociaDbContext, 
             IHubContext<ChatHub> chatHubContext,
-            IFriendService friendService)
+            IHubContext<NotificationHub> notificationHubContext,
+            IFriendService friendService,
+            INotificationService notificationService)
         {
             _sociaDbContext = sociaDbContext;
             _chatHubContext = chatHubContext;
+            _notificationHubContext = notificationHubContext;
             _friendService = friendService;
+            _notificationService = notificationService;
         }   
 
         public IActionResult Index(string? userId)
@@ -64,13 +70,37 @@ namespace Social_App.Controllers
 
             // Mark received messages as read
             var unreadMessages = messages.Where(m => m.ReceiverId == userId && !m.IsRead).ToList();
+            bool hasChanges = false;
             if (unreadMessages.Any())
             {
                 foreach (var msg in unreadMessages)
                 {
                     msg.IsRead = true;
                 }
+                hasChanges = true;
+            }
+
+            // Mark received message notifications as read
+            var unreadNotifications = await _sociaDbContext.Notifications
+                .Where(n => n.UserId == userId && n.Type == NotificationType.Message && n.PostId == otherUserId && !n.IsRead)
+                .ToListAsync();
+            if (unreadNotifications.Any())
+            {
+                foreach (var notif in unreadNotifications)
+                {
+                    notif.IsRead = true;
+                    notif.UpdatedAt = DateTime.UtcNow;
+                }
+                hasChanges = true;
+            }
+
+            if (hasChanges)
+            {
                 await _sociaDbContext.SaveChangesAsync();
+
+                // Broadcast updated unread notification count
+                var notificationNumber = await _notificationService.GetUnreadNotificationCountAsync(userId);
+                await _notificationHubContext.Clients.User(userId).SendAsync("ReceiveNotification", notificationNumber);
             }
 
             return Ok(messages);
@@ -114,6 +144,9 @@ namespace Social_App.Controllers
             // Broadcast to the Receiver and to other sessions of the Sender
             await _chatHubContext.Clients.User(request.ReceiverId).SendAsync("ReceiveMessage", payload);
             await _chatHubContext.Clients.User(userId).SendAsync("ReceiveMessage", payload);
+
+            // Add notification to receiver
+            await _notificationService.AddNewNotificationAsync(request.ReceiverId, NotificationType.Message, sender.FullName, sender.Id);
 
             return Ok(payload);
         }

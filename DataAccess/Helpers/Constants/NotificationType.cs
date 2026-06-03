@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,5 +13,6 @@ namespace DataAccess.Helpers.Constants
         public const string Favorite = "Favorite";
         public const string FriendRequest = "FriendRequest";
         public const string FriendRequestAprroved = "FriendRequestAprroved";
+        public const string Message = "Message";
     }
 }

@@ -106,6 +106,16 @@
 @section Scripts {
     <script>
         const currentUserId = "@currentUserId";
+        function parseServerDate(dateStr) {
+            if (!dateStr) return new Date();
+            if (typeof dateStr === 'string') {
+                const hasTimezone = dateStr.endsWith("Z") || (dateStr.includes("T") && (dateStr.split("T")[1].includes("+") || dateStr.split("T")[1].includes("-")));
+                if (!hasTimezone) {
+                    dateStr += "Z";
+                }
+            }
+            return new Date(dateStr);
+        }
         let activeChatUserId = null;
         let activeChatUserFullName = "";
         let activeChatUserAvatar = "";
@@ -303,8 +313,8 @@
 
             messages.forEach(m => {
                 const isSentByMe = m.senderId === currentUserId;
-                const timeString = new Date(m.sentAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                const messageDate = new Date(m.sentAt).toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' });
+                const timeString = parseServerDate(m.sentAt).toLocaleTimeString("en-US", { hour: '2-digit', minute: '2-digit', hour12: false });
+                const messageDate = parseServerDate(m.sentAt).toLocaleDateString("en-US", { weekday: 'long', month: 'short', day: 'numeric' });
 
                 if (messageDate !== lastDate) {
                     html += `<div class="flex items-center justify-center my-4">
@@ -381,7 +391,7 @@
 
         // Helpers
         function formatMessageTime(sentAt) {
-            const date = new Date(sentAt);
+            const date = parseServerDate(sentAt);
             const now = new Date();
             const diffMs = now - date;
             const diffMins = Math.floor(diffMs / 60000);
@@ -392,7 +402,7 @@
             const diffHours = Math.floor(diffMins / 60);
             if (diffHours < 24) return `${diffHours}h ago`;
             
-            return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
+            return date.toLocaleDateString("en-US", { month: 'short', day: 'numeric' });
         }
 
         function escapeHtml(text) {
@@ -496,7 +506,7 @@
             if (emptyEl) msgBox.innerHTML = "";
 
             const isSentByMe = m.senderId === currentUserId;
-            const timeString = new Date(m.sentAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const timeString = parseServerDate(m.sentAt).toLocaleTimeString("en-US", { hour: '2-digit', minute: '2-digit', hour12: false });
             
             let bubbleHtml = "";
             if (isSentByMe) {

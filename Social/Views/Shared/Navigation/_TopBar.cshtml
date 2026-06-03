@@ -1,4 +1,4 @@
-﻿@using System.Security.Claims
+@using System.Security.Claims
 @inject UserManager<User> UserManager
 @{
     var loggedInUser = await UserManager.GetUserAsync(User);
@@ -115,7 +115,7 @@
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         // Fetch notifications count
-        fetch("Notifications/GetCount", {
+        fetch("/Notifications/GetCount", {
             method: "GET",
             headers: {
                 'Content-Type': "application/json",
@@ -131,7 +131,7 @@
             });
 
         document.getElementById('notificationBtn').addEventListener('click', () => {
-            fetch('Notifications/GetNotifications')
+            fetch('/Notifications/GetNotifications')
                 .then(resp => resp.text())
                 .then(html => {
                     document.getElementById('notification-dropdown').innerHTML = html;
@@ -162,7 +162,7 @@
     function setNotificationAsRead(notificationId) {
         console.log('Mark as read => notification => ', notificationId);
 
-        fetch(`Notifications/SetNotificationAsRead?notificationId=${notificationId}`, {
+        fetch(`/Notifications/SetNotificationAsRead?notificationId=${notificationId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

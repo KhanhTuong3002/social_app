@@ -1,4 +1,4 @@
-﻿@model List<Notification>
+@model List<Notification>
 
 @foreach( var notification in Model)
 {
@@ -17,6 +17,7 @@
         NotificationType.Comment => "chatbubbles-outline",
         NotificationType.FriendRequest => "person-add-outline",
         NotificationType.FriendRequestAprroved => "person-outline",
+        NotificationType.Message => "chatbox-ellipses-outline",
         _ => "notifications-outline"
     };
 
@@ -24,6 +25,7 @@
     {
         NotificationType.FriendRequest => Url.Action("Index", "Friends"),
         NotificationType.FriendRequestAprroved => Url.Action("Index", "Friends"),
+        NotificationType.Message => Url.Action("Index", "Messages", new { userId = notification.PostId }),
         _ => !string.IsNullOrEmpty(notification.PostId)
                 ? Url.Action("Details", "Home", new { postId = notification.PostId })
                 : "#"

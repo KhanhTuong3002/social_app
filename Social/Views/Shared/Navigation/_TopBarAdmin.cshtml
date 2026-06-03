@@ -1,4 +1,4 @@
-﻿@using System.Security.Claims
+@using System.Security.Claims
 @inject UserManager<User> UserManager
 @{
     var loggedInUser = await UserManager.GetUserAsync(User);
@@ -105,6 +105,67 @@
         </div>
     </div>
 </header>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        // Fetch notifications count
+        fetch("/Notifications/GetCount", {
+            method: "GET",
+            headers: {
+                'Content-Type': "application/json",
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log("notificationsCount ==>", data);
+                document.getElementById("notificationsCount").innerHTML = data;
+            })
+            .catch(error => {
+                console.error("Error fetching notifications count: ", error);
+            });
+
+        document.getElementById('notificationBtn').addEventListener('click', () => {
+            fetch('/Notifications/GetNotifications')
+                .then(resp => resp.text())
+                .then(html => {
+                    document.getElementById('notification-dropdown').innerHTML = html;
+                })
+        })
+
+        // SignalR connection
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/notificationHub")
+            .build();
+
+        connection.on("ReceiveNotification", (message) => {
+            console.log("message ==>", message);
+            document.getElementById("notificationsCount").innerHTML = message; 
+        });
+
+        connection.start()
+            .then(() => {
+                console.log("SignalR connection established.");
+            })
+            .catch((err) => {
+                console.error("Error establishing SignalR connection: ", err);
+            });
+    });
+
+    function setNotificationAsRead(notificationId) {
+        console.log('Mark as read => notification => ', notificationId);
+
+        fetch(`/Notifications/SetNotificationAsRead?notificationId=${notificationId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(resp => resp.text())
+            .then(html => {
+                document.getElementById('notification-dropdown').innerHTML = html;
+            })
+    }
+</script>
 
 
 
